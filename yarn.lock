@@ -298,6 +298,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nanostores/persistent@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@nanostores/persistent@npm:0.5.0"
+  peerDependencies:
+    nanostores: ^0.5.0
+  checksum: 41b7abaa4870d9e26911fa16dd89939910f68329637e34802ea5b3a120d77eef217d040d5adfab9273a1e02c99131fb80b00c73f20dbb141cd09d095ef3f4afe
+  languageName: node
+  linkType: hard
+
+"@nanostores/preact@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@nanostores/preact@npm:0.1.3"
+  peerDependencies:
+    nanostores: ^0.5.2
+    preact: ">=10.0.0"
+  checksum: ae5ba0ecdbeb6edc316e10cd41bdd0e21c19aa8421191237e647cccc89cf5ed050e483d3c7dda3345d3778ffb07075260b4dc868e448b1634e34f67974d065e8
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -4347,6 +4366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanostores@npm:^0.5.8":
+  version: 0.5.8
+  resolution: "nanostores@npm:0.5.8"
+  checksum: 946aacd42577caead112c9eb5312500473e90f42b6394ee80b8d70d1c72d82cfdb90425e5a42a0ded8152a5b9e64843cbfdedecba4e68cf421813e8d32359cc5
+  languageName: node
+  linkType: hard
+
 "ncp@npm:^2.0.0":
   version: 2.0.0
   resolution: "ncp@npm:2.0.0"
@@ -4613,7 +4639,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oss-photos@workspace:."
   dependencies:
+    "@nanostores/persistent": ^0.5.0
+    "@nanostores/preact": ^0.1.3
     "@parcel/transformer-sass": ^2.0.1
+    nanostores: ^0.5.8
     parcel: ^2.0.1
     postcss: ^8.2.1
     preact: ^10.6.4

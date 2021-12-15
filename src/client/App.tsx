@@ -1,8 +1,19 @@
 import { Route, Switch } from "wouter-preact"
-import { AppContext, AppCtx } from "./application/app-context"
 import PhotosListPage from "./pages/PhotosListPage"
 import SettingsPage from "./pages/SettingsPage"
 import Layout from "./components/Layout"
+import { createContext } from "preact"
+import { useContext } from "preact/hooks"
+
+export interface AppContext {
+  // TODO
+}
+
+export const AppCtx = createContext<AppContext>({} as AppContext)
+
+export function useAppContext() {
+  return useContext(AppCtx)
+}
 
 export function App(props: { ctx: AppContext }) {
   return (

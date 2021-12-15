@@ -1,5 +1,5 @@
 import { render } from "preact"
-import { App } from "../shared/App"
+import { App } from "./App"
 
 const root = document.getElementById("app")
 if (!root) {
