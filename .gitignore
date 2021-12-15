@@ -1,6 +1,7 @@
 dist/
 .parcel-cache/
 node_modules/
+.idea
 
 # Yarn
 yarn-error.log

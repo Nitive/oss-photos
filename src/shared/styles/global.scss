@@ -1,0 +1,22 @@
+@import './vars.scss';
+@import '~reset-css';
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $defaultFontFamily;
+  font-size: $defaultFontSize;
+  background: $defaultBackgroundColor;
+  color: $defaultTextColor;
+}

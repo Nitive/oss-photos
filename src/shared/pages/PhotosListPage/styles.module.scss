@@ -1,0 +1,12 @@
+@import '../../styles/vars';
+@import '../../styles/mixins';
+
+.page {
+  .header {
+    @include h1;
+  }
+
+  .list {
+    margin-top: 20px;
+  }
+}

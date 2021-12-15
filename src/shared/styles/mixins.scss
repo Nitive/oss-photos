@@ -1,0 +1,30 @@
+@import './vars.scss';
+
+@mixin h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: bold;
+}
+
+@mixin link($color: $blue, $hoverColor: $red, $borderStyle: solid) {
+  @if $borderStyle {
+    border-bottom: 1px $borderStyle rgba($color, 0.4);
+    border-color: rgba($color, 0.4);
+  } @else {
+    border: none;
+  }
+  text-decoration: none;
+  color: $color;
+
+  &:visited {
+    color: $color;
+  }
+
+  &:hover,
+  &:active {
+    color: $hoverColor;
+    @if $borderStyle {
+      border-color: rgba($hoverColor, 1);
+    }
+  }
+}

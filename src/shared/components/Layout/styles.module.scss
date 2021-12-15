@@ -1,0 +1,40 @@
+@import '../../styles/vars';
+@import '../../styles/mixins';
+
+$paddingTop: 40px;
+$paddingBottom: 80px;
+
+.layout {
+  height: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+
+  .sidebar {
+    flex: 0 0 200px;
+    padding: $paddingTop 40px $paddingBottom 20px;
+    border-right: 1px solid $grayLight;
+
+    .logo {
+      @include h1;
+    }
+
+    .menu {
+      margin-top: 20px;
+
+      .item {
+        &:not(:first-child) {
+          margin-top: 10px;
+        }
+        a {
+          @include link;
+        }
+      }
+    }
+  }
+
+  .content {
+    flex: 1 1 100%;
+    padding: $paddingTop 40px $paddingBottom 40px;
+  }
+}
