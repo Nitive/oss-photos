@@ -5,17 +5,27 @@
   "author": "Maxim Samoilov <nitive@icloud.com>",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start": "parcel src/client/index.html"
+    "start": "parcel src/client/index.html",
+    "start-server": "nodemon"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts,yaml",
+    "exec": "ts-node --pretty --transpile-only src/server/index.ts"
   },
   "dependencies": {
     "@nanostores/persistent": "^0.5.0",
     "@nanostores/preact": "^0.1.3",
     "koa": "^2.13.4",
     "nanostores": "^0.5.8",
+    "nodemon": "^2.0.15",
     "parcel": "^2.0.1",
     "preact": "^10.6.4",
     "prettier": "^2.5.1",
     "reset-css": "^5.0.1",
+    "ts-node": "^10.4.0",
     "typescript": "^4.5.3",
     "wouter-preact": "^2.8.0-alpha.2"
   },
