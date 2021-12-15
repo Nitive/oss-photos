@@ -1,19 +1,18 @@
 // @ts-ignore
 import * as css from "./styles.module.scss"
+import axios from "axios"
 import { useEffect, useState } from "preact/compat"
 import { useStore } from "@nanostores/preact"
 import { $settings } from "../../store"
 
 const getPhotos = async ({ endCursor = undefined, limit = 10 } = {}) => {
+  const { data } = await axios("http://localhost:3000/photos", {
+    params: { limit },
+  })
+
   return {
     pageInfo: { hasNextPage: true, endCursor: 123 },
-    photos: Array.from(Array(limit)).map(() => ({
-      preview:
-        "https://www.natalieportman.com/wp-content/uploads/2021/08/6F9362C6-8DC9-44A2-8C17-98B8058E075F.jpeg",
-      big: "https://www.natalieportman.com/wp-content/uploads/2021/08/6F9362C6-8DC9-44A2-8C17-98B8058E075F.jpeg",
-      original:
-        "https://www.natalieportman.com/wp-content/uploads/2021/08/6F9362C6-8DC9-44A2-8C17-98B8058E075F.jpeg",
-    })),
+    photos: data,
   }
 }
 
