@@ -2,11 +2,12 @@ dist/
 .parcel-cache/
 node_modules/
 .idea
+.vscode/*
 
 # Yarn
 yarn-error.log
 .pnp.*
-.yarn/*
+.yarn/
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
