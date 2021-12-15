@@ -5,7 +5,7 @@ $paddingTop: 40px;
 $paddingBottom: 80px;
 
 .layout {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
