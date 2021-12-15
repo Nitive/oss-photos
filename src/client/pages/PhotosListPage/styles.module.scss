@@ -7,6 +7,27 @@
   }
 
   .list {
-    margin-top: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    margin: 10px -10px -10px -10px;
+
+    .item {
+      width: 200px;
+      height: 200px;
+      padding: 20px;
+      border: 1px solid $grayLight;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin: 10px;
+
+      .photo {
+        flex: 1 1 100%;
+        width: 100%;
+        height: auto;
+      }
+    }
   }
 }
