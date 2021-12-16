@@ -1,6 +1,6 @@
-// @ts-ignore
 import { useEffect, useState } from "preact/compat"
 import HearthIcon from "../../icons/HearthIcon"
+// @ts-ignore
 import * as css from "./styles.module.scss"
 
 const getPhotos = async () => {
@@ -15,6 +15,7 @@ interface Photo {
 const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
   await fetch(`http://localhost:3000/photos/${id}/label`, {
     method: "PATCH",
+    // TODO: labels can be merged on backend
     body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
     headers: {
       "Content-Type": "application/json;utf-8",
@@ -142,7 +143,12 @@ export default function PhotosListPage() {
                 onClick={() => makePhotoFavorite(1, [])}
                 className={css.favoriteIcon}
               >
-                <HearthIcon />
+                <div
+                  onClick={() => makePhotoFavorite(1, [])}
+                  className={css.favoriteIcon}
+                >
+                  <HearthIcon />
+                </div>
               </div>
             </div>
           )
