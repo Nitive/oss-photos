@@ -1,37 +1,67 @@
-import 'dotenv/config'
+import * as cors from "@koa/cors"
+import { CronJob } from "cron"
+import "dotenv/config"
 import * as Koa from "koa"
 import * as koaBody from "koa-body"
 import * as Router from "koa-router"
-import * as cors from "@koa/cors"
-import { CronJob } from "cron"
 import { generateMetaData, getMetaData } from "./generateMetaData"
+import s3, { config } from "./s3"
 
 const app = new Koa()
 const router = new Router()
+
+app.use(cors())
 app.use(koaBody())
 app.use(router.routes()).use(router.allowedMethods())
-app.use(cors())
 
 let object: { [key: number]: { labels: Array<string> } } = {
-  1: { labels: [] }
+  1: { labels: [] },
 }
 
-router.get("/photos", async (ctx: any, next: any) => {
+router.get("/photos", async (ctx) => {
   const metaData = await getMetaData()
   ctx.body = metaData
-  next()
 })
 
 router.patch("/photos/:id/label", (ctx, next) => {
-  const { id } = ctx.request.params as { id: number};
-  const { labels } = ctx.request.body;
+  const { id } = (ctx.request as any).params as { id: number }
+  const { labels } = ctx.request.body
 
   object[id] = { ...object[id], labels }
   ctx.body = object[id]
   next()
 })
 
-app.listen(3000)
+router.get("/photo", async (ctx) => {
+  const { src } = ctx.request.query as any
+  if (!src) {
+    ctx.status = 400
+    ctx.body = "src query param required"
+    return
+  }
+
+  const data = await new Promise<AWS.S3.GetObjectOutput>((resolve, reject) => {
+    s3.getObject(
+      {
+        Bucket: config.bucket,
+        Key: src,
+      },
+      (err, data) => {
+        if (err) return reject(err)
+        resolve(data)
+      }
+    )
+  })
+  ctx.body = data.Body
+  ctx.header.etag = data.ETag
+  ctx.header["cache-control"] =
+    "Cache-Control: max-age=0, must-revalidate, public"
+  ctx.status = 200
+})
+
+app.listen(3000, () => {
+  console.log("Started on https://localhost:3000")
+})
 
 generateMetaData()
 new CronJob(

@@ -1,42 +1,39 @@
 // @ts-ignore
-import * as css from "./styles.module.scss"
-import axios from "axios"
 import { useEffect, useState } from "preact/compat"
-import { useStore } from "@nanostores/preact"
-import { $settings } from "../../store"
 import HearthIcon from "../../icons/HearthIcon"
+import * as css from "./styles.module.scss"
 
-const getPhotos = async ({ endCursor = undefined, limit = 10 } = {}) => {
-  const { data } = await axios("http://localhost:3000/photos", {
-    params: { limit },
-  })
+const getPhotos = async () => {
+  const data = await fetch("http://localhost:3000/photos")
+  return await data.json()
+}
 
-  return {
-    pageInfo: { hasNextPage: true, endCursor: 123 },
-    photos: data,
-  }
+interface Photo {
+  s3Key: string
 }
 
 const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
-  const { data } = await axios(`http://localhost:3000/photos/${id}/label`, {
+  await fetch(`http://localhost:3000/photos/${id}/label`, {
     method: "PATCH",
-    // TODO: labels can be merged on backend
-    data: { labels: [...currentLabels, 'favorite'] },
+    body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
+    headers: {
+      "Content-Type": "application/json;utf-8",
+    },
   })
 }
 
 export default function PhotosListPage() {
-  const settings = useStore($settings)
-  const [photos, setPhotos] = useState([] as any)
-  const [photosLoading, setPhotosLoading] = useState(true)
-  const [pageInfo, setPageInfo] = useState({})
+  const [photos, setPhotos] = useState([] as Photo[])
   const [openPhoto, setOpenPhoto]: any = useState(null)
 
+  function getPreview(s3Key: string) {
+    return `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
+  }
+
   useEffect(() => {
-    setPhotosLoading(true)
-    getPhotos().then(({ photos, pageInfo }) => {
+    getPhotos().then(({ photos }) => {
+      console.log("photos", photos)
       setPhotos(photos)
-      setPageInfo(pageInfo)
     })
   }, [])
 
@@ -112,22 +109,29 @@ export default function PhotosListPage() {
             </button>
             <img
               className={css.open_photo}
-              src={photos[openPhoto.i].preview}
+              src={getPreview(photos[openPhoto.i].s3Key)}
               alt=""
             />
           </div>
         ) : (
-          photos.map((photo: any, i: any) => {
+          photos.map((photo, i) => {
             return (
               <div
                 className={css.item}
-                key={photo.id}
+                key={photo.s3Key}
                 onClick={(e) => {
                   setOpenPhoto({ i })
                 }}
               >
-                <img className={css.photo} src={photo.preview} alt="" />
-                <div onClick={() => makePhotoFavorite(1, [])} className={css.favoriteIcon}>
+                <img
+                  className={css.photo}
+                  src={getPreview(photo.s3Key)}
+                  alt=""
+                />
+                <div
+                  onClick={() => makePhotoFavorite(1, [])}
+                  className={css.favoriteIcon}
+                >
                   <HearthIcon />
                 </div>
               </div>

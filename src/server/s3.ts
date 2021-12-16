@@ -5,4 +5,9 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
 })
 
+export const config = {
+  bucket: process.env.S3_BUCKET!,
+  prefix: process.env.S3_PREFIX || "",
+}
+
 export default s3
