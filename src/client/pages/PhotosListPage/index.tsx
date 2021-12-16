@@ -39,7 +39,6 @@ export default function PhotosListPage() {
 
   return (
     <div className={css.page}>
-      <h1 className={css.header}>Photos List</h1>
       {metaDataLoading ? (
         <p>Loading...</p>
       ) : (
@@ -51,6 +50,9 @@ export default function PhotosListPage() {
                 key={photo.s3Key}
                 onClick={() => {
                   setOpenPhoto({ index: i, show: false })
+                  const paddingOffset =
+                    window.innerWidth - document.body.offsetWidth + "px"
+                  document.body.style.paddingRight = paddingOffset
                   document.body.classList.add(css.disable_scroll)
                 }}
               >
@@ -73,7 +75,7 @@ export default function PhotosListPage() {
                     deletePhoto(photo.s3Key)
                   }}
                 >
-                  delete
+                  d
                 </button>
               </div>
             )

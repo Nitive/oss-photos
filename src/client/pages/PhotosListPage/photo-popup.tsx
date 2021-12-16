@@ -17,6 +17,7 @@ export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
         onClick={() => {
           setOpenPhoto(null)
           document.body.classList.remove(css.disable_scroll)
+          document.body.style.paddingRight = "0px"
         }}
       >
         <CrossIcon />
