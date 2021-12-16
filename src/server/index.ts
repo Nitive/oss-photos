@@ -13,7 +13,7 @@ app.use(router.routes()).use(router.allowedMethods())
 app.use(cors())
 
 router.get("/photos", async (ctx: any, next: any) => {
-  const { limit } = ctx.request.query
+  // const { limit } = ctx.request.query
   const metaData = await getMetaData()
   ctx.body = metaData
   next()
