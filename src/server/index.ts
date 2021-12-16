@@ -12,9 +12,22 @@ app.use(koaBody())
 app.use(router.routes()).use(router.allowedMethods())
 app.use(cors())
 
+let object: { [key: number]: { labels: Array<string> } } = {
+  1: { labels: [] }
+}
+
 router.get("/photos", async (ctx: any, next: any) => {
   const metaData = await getMetaData()
   ctx.body = metaData
+  next()
+})
+
+router.patch("/photos/:id/label", (ctx, next) => {
+  const { id } = ctx.request.params as { id: number};
+  const { labels } = ctx.request.body;
+
+  object[id] = { ...object[id], labels }
+  ctx.body = object[id]
   next()
 })
 
