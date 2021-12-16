@@ -5,6 +5,7 @@ import { useEffect, useState } from "preact/hooks"
 import HeartIcon from "../../icons/HeartIcon"
 import Img from "../../icons/Img"
 import Trash from "../../icons/Trash"
+import Upload from "../Upload"
 
 const SideBar = () => {
   const [selectedMenu, setSelectedMenu] = useState("photos")
@@ -58,6 +59,9 @@ const SideBar = () => {
           >
             <Img fill={"#0076FF"} className={css.sidebar_icon} /> Favorites
           </Link>
+        </li>
+        <li className={css.sidebar_item}>
+          <Upload />
         </li>
       </ul>
     </div>

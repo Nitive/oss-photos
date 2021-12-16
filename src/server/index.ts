@@ -10,13 +10,14 @@ import {
   programmableDeleteObject,
 } from "./generateMetaData"
 import s3, { config } from "./s3"
+import * as path from "path"
+import * as fs from "fs"
 
 const app = new Koa()
 const router = new Router()
 
 app.use(cors())
-app.use(koaBody())
-app.use(router.routes()).use(router.allowedMethods())
+app.use(koaBody({ multipart: true }))
 
 router.get("/photos", async (ctx) => {
   const metaData = await getMetaData()
@@ -31,6 +32,41 @@ router.get("/deleted-photos", async (ctx) => {
   ctx.body = {
     ...metaData,
     photos: metaData.photos.filter((photo) => photo.deleted),
+  }
+})
+
+router.post("/upload", async (ctx: any) => {
+  const files = Object.values(ctx.request.files)
+  try {
+    const filePromises = files.map((file: any) => {
+      const { path: filePath, name, type } = file
+      const body = fs.createReadStream(filePath)
+      const key = path.join(config.prefix, name)
+      const params = {
+        Bucket: config.bucket,
+        Key: key,
+        Body: body,
+        ContentType: type,
+      }
+      return new Promise(function (resolve, reject) {
+        s3.upload(params, function (error: any, data: any) {
+          if (error) {
+            reject(error)
+            return
+          }
+          console.log(data)
+          resolve(data)
+          return
+        })
+      })
+    })
+    const res = await Promise.all(filePromises)
+    console.log(123, res)
+    const metaData = await generateMetaData()
+    ctx.body = metaData
+  } catch (error) {
+    console.error(error)
+    ctx.body = error
   }
 })
 
@@ -75,6 +111,8 @@ router.get("/photo", async (ctx) => {
   ctx.header["cache-control"] = "Cache-Control: max-age=31557600, public"
   ctx.status = 200
 })
+
+app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(3000, () => {
   console.log("Started on https://localhost:3000")

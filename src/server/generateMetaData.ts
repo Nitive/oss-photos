@@ -106,7 +106,13 @@ const getPhotoMetaData = async (s3Key: string, s3ETag: string) => {
               ...exifrMetaData,
             })
           })
-          .catch((err) => reject(err))
+          .catch((err) => {
+            console.error(err)
+            resolve({
+              s3Key,
+              s3ETag,
+            })
+          })
       }
     )
   })
@@ -177,4 +183,5 @@ export const generateMetaData = async () => {
     photos: sortPhotos(newMetaData.photos),
   })
   console.info("Finish generating meta data")
+  return newMetaData
 }

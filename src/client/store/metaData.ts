@@ -27,3 +27,7 @@ export async function fetchDeletedMetaData() {
   $deletedMetaData.set(metaData)
   $deletedMetaDataLoading.set(false)
 }
+
+export async function setMetaData(metaData: any) {
+  $metaData.set(metaData)
+}

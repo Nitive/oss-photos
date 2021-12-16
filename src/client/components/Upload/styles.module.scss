@@ -1,0 +1,13 @@
+@import "../../styles/vars";
+@import "../../styles/mixins";
+
+
+.label {
+  .input {
+    display: none;
+  }
+
+  .link {
+    @include link;
+  }
+}
