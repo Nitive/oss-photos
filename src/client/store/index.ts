@@ -1,2 +1,2 @@
-export * from './settings'
-export * from './metaData'
+export * from "./settings"
+export * from "./metaData"

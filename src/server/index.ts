@@ -54,8 +54,7 @@ router.get("/photo", async (ctx) => {
   })
   ctx.body = data.Body
   ctx.header.etag = data.ETag
-  ctx.header["cache-control"] =
-    "Cache-Control: max-age=31557600, public"
+  ctx.header["cache-control"] = "Cache-Control: max-age=31557600, public"
   ctx.status = 200
 })
 

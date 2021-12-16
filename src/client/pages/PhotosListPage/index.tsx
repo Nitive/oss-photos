@@ -6,6 +6,7 @@ import { useStore } from "@nanostores/preact"
 import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
 import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
+import { CrossIcon } from "../../icons/CrossIcon"
 
 const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
   await fetch(`http://localhost:3000/photos/${id}/label`, {
@@ -83,8 +84,7 @@ export default function PhotosListPage() {
               setOpenPhoto(null)
             }}
           >
-            <span></span>
-            <span></span>
+            <CrossIcon />
           </button>
           <button
             className={css.arrow_left}

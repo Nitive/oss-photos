@@ -88,29 +88,19 @@
   padding: 0;
   background-color: transparent;
   position: absolute;
-  right: 20px;
-  top: 20px;
+  right: 40px;
+  top: 40px;
   width: 40px;
   height: 40px;
   cursor: pointer;
   z-index: 100;
 
-  span {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    display: block;
-    width: 40px;
-    height: 2px;
-    background-color: #b5b5b5;
-    transform: translateY(-50%);
+  svg {
+    width: 30px;
+    height: 30px;
 
-    &:first-child {
-      transform: rotate(45deg);
-    }
-
-    &:last-child {
-      transform: rotate(-45deg);
+    path {
+      color: white;
     }
   }
 }
