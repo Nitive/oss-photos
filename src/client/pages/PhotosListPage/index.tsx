@@ -8,7 +8,7 @@ import HearthIcon from "../../icons/HearthIcon"
 
 const getPhotos = async ({ endCursor = undefined, limit = 10 } = {}) => {
   const { data } = await axios("http://localhost:3000/photos", {
-    params: { limit, label: ['favorite'] },
+    params: { limit },
   })
 
   return {
