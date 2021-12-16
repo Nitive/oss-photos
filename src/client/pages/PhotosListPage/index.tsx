@@ -11,12 +11,15 @@ import { CrossIcon } from "../../icons/CrossIcon"
 const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
   await fetch(`http://localhost:3000/photos/${id}/label`, {
     method: "PATCH",
-    // TODO: labels can be merged on backend
     body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
     headers: {
       "Content-Type": "application/json;utf-8",
     },
   })
+}
+
+const deletePhoto = async (key: string) => {
+  await fetch(`http://localhost:3000/photos/${encodeURIComponent(key)}`, { method: "DELETE" })
 }
 
 interface OpenPhotoState {
@@ -64,13 +67,13 @@ export default function PhotosListPage() {
                   onClick={() => makePhotoFavorite(1, [])}
                   className={css.favoriteIcon}
                 >
-                  <div
-                    onClick={() => makePhotoFavorite(1, [])}
-                    className={css.favoriteIcon}
-                  >
-                    <HearthIcon />
-                  </div>
+                  <HearthIcon />
                 </div>
+
+                <button style={{ position: 'absolute' }} onClick={(event) => {
+                  event.stopPropagation();
+                  deletePhoto(photo.s3Key)
+                }}>delete</button>
               </div>
             )
           })}

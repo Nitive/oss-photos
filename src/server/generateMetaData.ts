@@ -46,7 +46,9 @@ const getAllObjects = async () => {
   return objects
 }
 
-export const getMetaData = () => {
+type MetaItem = { s3ETag: string; s3Key: string; deleted: boolean }
+
+export const getMetaData = (): Promise<{ generatedAt: string, photos: MetaItem[] }> => {
   return new Promise((resolve, reject) => {
     s3.getObject(
       {
@@ -60,6 +62,15 @@ export const getMetaData = () => {
       }
     )
   })
+}
+
+export const programmableDeleteObject = async (key: string) => {
+  const meta = await getMetaData();
+  const photos = meta.photos.map(photo => {
+    return photo.s3Key === key ? { ...photo, deleted: true } : photo
+  })
+
+  return uploadNewMetaData({...meta, photos })
 }
 
 export const deleteMetaData = () => {
