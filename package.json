@@ -6,7 +6,8 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "start": "parcel src/client/index.html",
-    "start-server": "nodemon"
+    "start-server": "nodemon",
+    "postinstall": "yarn dlx @yarnpkg/sdks base"
   },
   "nodemonConfig": {
     "watch": [
