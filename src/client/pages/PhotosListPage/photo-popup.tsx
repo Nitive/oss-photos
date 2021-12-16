@@ -1,11 +1,11 @@
-import ArrowRight from "../../icons/ArrowRight"
+import { useStore } from "@nanostores/preact"
 import ArrowLeft from "../../icons/ArrowLeft"
+import ArrowRight from "../../icons/ArrowRight"
 import { CrossIcon } from "../../icons/CrossIcon"
+import { $metaData } from "../../store"
 // @ts-ignore
 import * as css from "./styles.module.scss"
-import { getPreview } from "./getPhoto"
-import { useStore } from "@nanostores/preact"
-import { $metaData } from "../../store"
+import { getPreview } from "./utils"
 
 export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
   const metaData = useStore($metaData)
