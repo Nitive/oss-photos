@@ -4,6 +4,6 @@
     "jsxImportSource": "preact",
     "strict": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["es2015"]
+    "lib": ["es2021", "dom"]
   }
 }
