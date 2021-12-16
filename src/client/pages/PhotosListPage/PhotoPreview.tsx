@@ -30,8 +30,7 @@ export function PhotoPreview(props: Props) {
       >
         <HearthIcon />
       </button>
-
-      <button
+      {/*<button
         style={{ position: "absolute" }}
         onClick={(event) => {
           event.stopPropagation()
@@ -39,7 +38,7 @@ export function PhotoPreview(props: Props) {
         }}
       >
         d
-      </button>
+      </button>*/}{" "}
     </div>
   )
 }
