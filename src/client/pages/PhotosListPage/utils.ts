@@ -4,7 +4,10 @@ export function getPreview(s3Key: string) {
   )}`
 }
 
-export const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
+export const makePhotoFavorite = async (
+  id: number,
+  currentLabels: Array<string>
+) => {
   await fetch(`http://localhost:3000/photos/${id}/label`, {
     method: "PATCH",
     body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
@@ -19,4 +22,3 @@ export const deletePhoto = async (key: string) => {
     method: "DELETE",
   })
 }
-
