@@ -4,12 +4,13 @@
 .page {
   .header {
     @include h1;
+    margin-bottom: 20px;
   }
 
   .list {
     display: flex;
     flex-flow: row wrap;
-    margin: 10px -10px -10px -10px;
+    margin: -10px -10px -10px -10px;
 
     .item {
       width: 200px;
@@ -25,9 +26,9 @@
       cursor: pointer;
 
       .photo {
-        flex: 1 1 100%;
+        height: 100%;
         width: 100%;
-        height: auto;
+        object-fit: contain;
       }
 
       .favoriteIcon {
@@ -35,13 +36,13 @@
         position: absolute;
         left: 10px;
         bottom: 10px;
-        transition: opacity .15s linear;
+        transition: opacity 0.15s linear;
 
         svg {
           width: 18px;
           height: 18px;
           cursor: pointer;
-          transition: opacity .15s linear;
+          transition: opacity 0.15s linear;
         }
       }
 
@@ -50,8 +51,10 @@
           opacity: 1;
 
           svg {
-            opacity: .6;
-            &:hover { opacity: 1 }
+            opacity: 0.6;
+            &:hover {
+              opacity: 1;
+            }
           }
         }
       }
@@ -91,6 +94,7 @@
   height: 40px;
   cursor: pointer;
   z-index: 100;
+
   span {
     position: absolute;
     left: 0;
@@ -122,6 +126,15 @@
   height: 30px;
   z-index: 100;
   cursor: pointer;
+
+  svg {
+    width: 30px;
+    height: 30px;
+
+    path {
+      fill: #fff;
+    }
+  }
 }
 
 .arrow_left {
@@ -135,4 +148,13 @@
   height: 30px;
   z-index: 100;
   cursor: pointer;
+
+  svg {
+    width: 30px;
+    height: 30px;
+
+    path {
+      fill: #fff;
+    }
+  }
 }
