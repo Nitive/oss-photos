@@ -1,8 +1,5 @@
 import { atom } from "nanostores"
-
-interface Photo {
-  s3Key: string
-}
+import { Photo } from "../../types"
 
 export const $metaData = atom({
   generatedAt: "",

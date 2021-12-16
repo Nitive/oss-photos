@@ -18,7 +18,9 @@ const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
 }
 
 const deletePhoto = async (key: string) => {
-  await fetch(`http://localhost:3000/photos/${encodeURIComponent(key)}`, { method: "DELETE" })
+  await fetch(`http://localhost:3000/photos/${encodeURIComponent(key)}`, {
+    method: "DELETE",
+  })
 }
 
 interface OpenPhotoState {
@@ -64,10 +66,15 @@ export default function PhotosListPage() {
                   <HearthIcon />
                 </div>
 
-                <button style={{ position: 'absolute' }} onClick={(event) => {
-                  event.stopPropagation();
-                  deletePhoto(photo.s3Key)
-                }}>delete</button>
+                <button
+                  style={{ position: "absolute" }}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    deletePhoto(photo.s3Key)
+                  }}
+                >
+                  delete
+                </button>
               </div>
             )
           })}
