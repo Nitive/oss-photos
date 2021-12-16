@@ -12,7 +12,8 @@ app.use(cors())
 router.get("/photos", (ctx, next) => {
   const { limit } = ctx.request.query
 
-  const photos = Array.from(Array(Number(limit))).map(() => ({
+  const photos = Array.from(Array(Number(limit))).map((el, id) => ({
+    id: String(id),
     preview:
       "https://www.natalieportman.com/wp-content/uploads/2021/08/6F9362C6-8DC9-44A2-8C17-98B8058E075F.jpeg",
     big: "https://www.natalieportman.com/wp-content/uploads/2021/08/6F9362C6-8DC9-44A2-8C17-98B8058E075F.jpeg",
