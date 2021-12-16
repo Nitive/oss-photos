@@ -24,12 +24,12 @@ export function PhotoPreview(props: Props) {
       }}
     >
       <img className={css.photo} src={getPreview(props.photo.s3Key)} alt="" />
-      <div
+      <button
         onClick={() => makePhotoFavorite(1, [])}
         className={css.favoriteIcon}
       >
         <HearthIcon />
-      </div>
+      </button>
 
       <button
         style={{ position: "absolute" }}

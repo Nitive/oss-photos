@@ -29,6 +29,8 @@
       }
 
       .favoriteIcon {
+        background: none;
+        border: 0;
         opacity: 0;
         position: absolute;
         left: 10px;
@@ -56,6 +58,12 @@
         }
       }
     }
+  }
+}
+
+@container (min-width: 150px) and (min-height:  150px) {
+  .favoriteIcon {
+    display: none;
   }
 }
 
