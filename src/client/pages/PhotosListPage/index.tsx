@@ -1,10 +1,10 @@
+import { useStore } from "@nanostores/preact"
 import { useEffect, useState } from "preact/compat"
+import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
+import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
+import { PhotoPreview } from "./PhotoPreview"
 // @ts-ignore
 import * as css from "./styles.module.scss"
-import { useStore } from "@nanostores/preact"
-import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
-import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
-import { PhotoPreview } from "./PhotoPreview"
 
 interface OpenPhotoState {
   index: number
@@ -26,9 +26,20 @@ export default function PhotosListPage() {
         <p>Loading...</p>
       ) : (
         <div className={css.list}>
-          {metaData.photos.map((photo, i) => (
-            <PhotoPreview photo={photo} index={i} setOpenPhoto={setOpenPhoto} />
-          ))}
+          {metaData.photos.map((photo, i) => {
+            const preview = (
+              <PhotoPreview
+                photo={photo}
+                index={i}
+                setOpenPhoto={setOpenPhoto}
+              />
+            )
+            return metaData.selectedPhotos.includes(photo.s3Key) ? (
+              <div class={css.selectedPhoto}>{preview}</div>
+            ) : (
+              preview
+            )
+          })}
         </div>
       )}
       {openPhoto && (
