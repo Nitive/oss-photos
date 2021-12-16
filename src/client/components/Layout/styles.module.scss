@@ -37,10 +37,12 @@ $paddingBottom: 80px;
       align-items: center;
       color: #0076ff;
       font-size: 24px;
+      padding: 10px;
       text-decoration: none;
     }
 
     &_selected {
+      border-radius: 12px;
       background-color: rgba(0, 0, 0, 0.05);
     }
 
