@@ -136,6 +136,15 @@ const getNewMetaData = async (currentMetaData: any, objects: any) => {
   return newMetaData
 }
 
+function sortPhotos(photos: any[]) {
+  return photos.slice().sort((a, b) => {
+    return (
+      new Date(b.DateTimeOriginal).getTime() -
+      new Date(a.DateTimeOriginal).getTime()
+    )
+  })
+}
+
 export const generateMetaData = async () => {
   // await deleteMetaData()
   console.info("Start generating meta data")
@@ -146,6 +155,9 @@ export const generateMetaData = async () => {
   console.info("Generating new meta data")
   const newMetaData = await getNewMetaData(currentMetaData, objects)
   console.info("Uploading new meta data")
-  await uploadNewMetaData(newMetaData)
+  await uploadNewMetaData({
+    ...newMetaData,
+    photos: sortPhotos(newMetaData.photos),
+  })
   console.info("Finish generating meta data")
 }
