@@ -2,6 +2,8 @@ import { Photo } from "../../../types"
 import HeartIcon from "../../icons/HeartIcon"
 // @ts-ignore
 import * as css from "./styles.module.scss"
+// @ts-ignore
+import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
 import { deletePhoto, getPreview, makePhotoFavorite } from "../utils"
 
 interface Props {
@@ -20,7 +22,7 @@ export function PhotoPreview(props: Props) {
         const paddingOffset =
           window.innerWidth - document.body.offsetWidth + "px"
         document.body.style.paddingRight = paddingOffset
-        document.body.classList.add(css.disable_scroll)
+        document.body.classList.add(popupcss.disable_scroll)
       }}
     >
       <img className={css.photo} src={getPreview(props.photo.s3Key)} alt="" />
