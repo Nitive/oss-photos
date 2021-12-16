@@ -22,17 +22,23 @@ const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
   })
 }
 
+interface OpenPhotoState {
+  index: number
+  show: boolean
+}
+
 export default function PhotosListPage() {
   const [photos, setPhotos] = useState([] as Photo[])
-  const [openPhoto, setOpenPhoto]: any = useState(null)
+  const [openPhoto, setOpenPhoto] = useState(null as OpenPhotoState | null)
 
   function getPreview(s3Key: string) {
-    return `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
+    return `http://localhost:8080/insecure/rs:fit:300:300/plain/${encodeURIComponent(
+      `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
+    )}`
   }
 
   useEffect(() => {
     getPhotos().then(({ photos }) => {
-      console.log("photos", photos)
       setPhotos(photos)
     })
   }, [])
@@ -41,7 +47,7 @@ export default function PhotosListPage() {
     <div className={css.page}>
       <h1 className={css.header}>Photos List</h1>
       <div className={css.list}>
-        {openPhoto ? (
+        {openPhoto && (
           <div className={css.popup}>
             <button
               className={css.popup_close}
@@ -56,8 +62,10 @@ export default function PhotosListPage() {
               className={css.arrow_left}
               onClick={() => {
                 const nextPhoto =
-                  openPhoto.i === 0 ? photos.length - 1 : openPhoto.i - 1
-                setOpenPhoto({ i: nextPhoto })
+                  openPhoto.index === 0
+                    ? photos.length - 1
+                    : openPhoto.index - 1
+                setOpenPhoto({ index: nextPhoto, show: false })
               }}
             >
               <svg
@@ -84,8 +92,10 @@ export default function PhotosListPage() {
               className={css.arrow_right}
               onClick={() => {
                 const nextPhoto =
-                  openPhoto.i === photos.length - 1 ? 0 : openPhoto.i + 1
-                setOpenPhoto({ i: nextPhoto })
+                  openPhoto.index === photos.length - 1
+                    ? 0
+                    : openPhoto.index + 1
+                setOpenPhoto({ index: nextPhoto, show: false })
               }}
             >
               <svg
@@ -109,35 +119,34 @@ export default function PhotosListPage() {
             </button>
             <img
               className={css.open_photo}
-              src={getPreview(photos[openPhoto.i].s3Key)}
+              style={{ opacity: openPhoto.show ? 1 : 0 }}
+              src={getPreview(photos[openPhoto.index].s3Key)}
+              onLoad={() =>
+                setOpenPhoto({ index: openPhoto.index, show: true })
+              }
               alt=""
             />
           </div>
-        ) : (
-          photos.map((photo, i) => {
-            return (
-              <div
-                className={css.item}
-                key={photo.s3Key}
-                onClick={(e) => {
-                  setOpenPhoto({ i })
-                }}
-              >
-                <img
-                  className={css.photo}
-                  src={getPreview(photo.s3Key)}
-                  alt=""
-                />
-                <div
-                  onClick={() => makePhotoFavorite(1, [])}
-                  className={css.favoriteIcon}
-                >
-                  <HearthIcon />
-                </div>
-              </div>
-            )
-          })
         )}
+        {photos.map((photo, i) => {
+          return (
+            <div
+              className={css.item}
+              key={photo.s3Key}
+              onClick={() => {
+                setOpenPhoto({ index: i, show: false })
+              }}
+            >
+              <img className={css.photo} src={getPreview(photo.s3Key)} alt="" />
+              <div
+                onClick={() => makePhotoFavorite(1, [])}
+                className={css.favoriteIcon}
+              >
+                <HearthIcon />
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

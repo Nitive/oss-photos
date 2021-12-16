@@ -71,7 +71,7 @@ export const deleteMetaData = () => {
       },
       function (err, data) {
         if (err) return reject(err)
-        resolve(true)
+        resolve(data)
       }
     )
   })
@@ -100,13 +100,6 @@ const getPhotoMetaData = async (s3Key: any, s3ETag: any) => {
       }
     )
   })
-  return {
-    width: 1000,
-    height: 600,
-    s3Key,
-    s3ETag,
-    createdAt: new Date().toISOString(),
-  }
 }
 
 const uploadNewMetaData = async (newMetaData: any) => {
@@ -119,7 +112,7 @@ const uploadNewMetaData = async (newMetaData: any) => {
   return new Promise((resolve, reject) => {
     s3.upload(uploadParams, (err: any, data: any) => {
       if (err) return reject(err)
-      return resolve(true)
+      return resolve(data)
     })
   })
 }
