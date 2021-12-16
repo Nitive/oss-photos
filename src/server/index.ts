@@ -4,7 +4,7 @@ import "dotenv/config"
 import * as Koa from "koa"
 import * as koaBody from "koa-body"
 import * as Router from "koa-router"
-import { generateMetaData, getMetaData } from "./generateMetaData"
+import { generateMetaData, getMetaData, programmableDeleteObject } from "./generateMetaData"
 import s3, { config } from "./s3"
 
 const app = new Koa()
@@ -14,21 +14,24 @@ app.use(cors())
 app.use(koaBody())
 app.use(router.routes()).use(router.allowedMethods())
 
-let object: { [key: number]: { labels: Array<string> } } = {
-  1: { labels: [] },
-}
-
 router.get("/photos", async (ctx) => {
   const metaData = await getMetaData()
-  ctx.body = metaData
+  ctx.body = { ...metaData, photos: metaData.photos.filter(photo => !photo.deleted) }
 })
 
 router.patch("/photos/:id/label", (ctx, next) => {
-  const { id } = (ctx.request as any).params as { id: number }
+  const { id } = (ctx.request as any).params as { id: string }
   const { labels } = ctx.request.body
 
-  object[id] = { ...object[id], labels }
-  ctx.body = object[id]
+  ctx.body = { success: true }
+  next()
+})
+
+router.delete("/photos/:id", async (ctx, next) => {
+  const { id } = (ctx.request as any).params as { id: string }
+  await programmableDeleteObject(id);
+
+  ctx.body = { success: true }
   next()
 })
 
