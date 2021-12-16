@@ -4,9 +4,8 @@ import HearthIcon from "../../icons/HearthIcon"
 import * as css from "./styles.module.scss"
 import { useStore } from "@nanostores/preact"
 import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
-import ArrowRight from "../../icons/ArrowRight"
-import ArrowLeft from "../../icons/ArrowLeft"
-import { CrossIcon } from "../../icons/CrossIcon"
+import { getPreview } from "./getPhoto"
+import { PhotoPopup } from "./photo-popup"
 
 const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
   await fetch(`http://localhost:3000/photos/${id}/label`, {
@@ -33,12 +32,6 @@ export default function PhotosListPage() {
     fetchMetaData()
   }, [])
 
-  function getPreview(s3Key: string) {
-    return `http://localhost:8080/insecure/rs:fit:300:300/plain/${encodeURIComponent(
-      `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
-    )}`
-  }
-
   return (
     <div className={css.page}>
       <h1 className={css.header}>Photos List</h1>
@@ -53,6 +46,7 @@ export default function PhotosListPage() {
                 key={photo.s3Key}
                 onClick={() => {
                   setOpenPhoto({ index: i, show: false })
+                  document.body.classList.add(css.disable_scroll)
                 }}
               >
                 <img
@@ -77,47 +71,7 @@ export default function PhotosListPage() {
         </div>
       )}
       {openPhoto && (
-        <div className={css.popup}>
-          <button
-            className={css.popup_close}
-            onClick={() => {
-              setOpenPhoto(null)
-            }}
-          >
-            <CrossIcon />
-          </button>
-          <button
-            className={css.arrow_left}
-            onClick={() => {
-              const nextPhoto =
-                openPhoto.index === 0
-                  ? metaData.photos.length - 1
-                  : openPhoto.index - 1
-              setOpenPhoto({ index: nextPhoto, show: false })
-            }}
-          >
-            <ArrowLeft />
-          </button>
-          <button
-            className={css.arrow_right}
-            onClick={() => {
-              const nextPhoto =
-                openPhoto.index === metaData.photos.length - 1
-                  ? 0
-                  : openPhoto.index + 1
-              setOpenPhoto({ index: nextPhoto, show: false })
-            }}
-          >
-            <ArrowRight />
-          </button>
-          <img
-            className={css.open_photo}
-            style={{ opacity: openPhoto.show ? 1 : 0 }}
-            src={getPreview(metaData.photos[openPhoto.index].s3Key)}
-            onLoad={() => setOpenPhoto({ index: openPhoto.index, show: true })}
-            alt=""
-          />
-        </div>
+        <PhotoPopup openPhoto={openPhoto} setOpenPhoto={setOpenPhoto} />
       )}
     </div>
   )
