@@ -1,7 +1,12 @@
 import s3 from "./s3"
 import * as path from "path"
+import exifr from "exifr"
 
-const metaDataKey = path.join(process.env.S3_PREFIX as string, "oss-photo", "metadata.json")
+const metaDataKey = path.join(
+  process.env.S3_PREFIX as string,
+  "oss-photo",
+  "metadata.json"
+)
 
 const initialMetaData = {
   generatedAt: new Date().toISOString(),
@@ -49,7 +54,7 @@ export const getMetaData = () => {
         Key: metaDataKey,
       },
       function (err, data) {
-        if (err?.code === 'NoSuchKey') return resolve(initialMetaData)
+        if (err?.code === "NoSuchKey") return resolve(initialMetaData)
         if (err) return reject(err)
         resolve(JSON.parse(data?.Body?.toString() as string))
       }
@@ -57,7 +62,44 @@ export const getMetaData = () => {
   })
 }
 
+export const deleteMetaData = () => {
+  return new Promise((resolve, reject) => {
+    s3.deleteObject(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: metaDataKey,
+      },
+      function (err, data) {
+        if (err) return reject(err)
+        resolve(true)
+      }
+    )
+  })
+}
+
 const getPhotoMetaData = async (s3Key: any, s3ETag: any) => {
+  console.info("Getting photo meta data", s3Key)
+  return new Promise((resolve, reject) => {
+    s3.getObject(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: s3Key,
+      },
+      function (err: any, data: any) {
+        if (err) return reject(err)
+        exifr
+          .parse(data?.Body)
+          .then((exifrMetaData) => {
+            resolve({
+              s3Key,
+              s3ETag,
+              ...exifrMetaData,
+            })
+          })
+          .catch((err) => reject(err))
+      }
+    )
+  })
   return {
     width: 1000,
     height: 600,
@@ -72,7 +114,7 @@ const uploadNewMetaData = async (newMetaData: any) => {
     Bucket: process.env.S3_BUCKET as string,
     Key: metaDataKey,
     Body: JSON.stringify(newMetaData),
-    ContentType: 'application/json',
+    ContentType: "application/json",
   }
   return new Promise((resolve, reject) => {
     s3.upload(uploadParams, (err: any, data: any) => {
@@ -88,7 +130,9 @@ const getNewMetaData = async (currentMetaData: any, objects: any) => {
     photos: [] as any,
   }
   for (const object of objects) {
-    const currentMetaDataPhoto = currentMetaData.photos.find((photo: any) => photo.s3Key === object.Key)
+    const currentMetaDataPhoto = currentMetaData.photos.find(
+      (photo: any) => photo.s3Key === object.Key
+    )
     if (!currentMetaDataPhoto || currentMetaDataPhoto.s3ETag !== object.ETag) {
       const newMetaDataPhoto = await getPhotoMetaData(object.Key, object.ETag)
       newMetaData.photos.push(newMetaDataPhoto)
@@ -100,8 +144,15 @@ const getNewMetaData = async (currentMetaData: any, objects: any) => {
 }
 
 export const generateMetaData = async () => {
+  // await deleteMetaData()
+  console.info("Start generating meta data")
+  console.info("Getting current meta data")
   const currentMetaData = await getMetaData()
+  console.info("Getting current objects")
   const objects = await getAllObjects()
+  console.info("Generating new meta data")
   const newMetaData = await getNewMetaData(currentMetaData, objects)
+  console.info("Uploading new meta data")
   await uploadNewMetaData(newMetaData)
+  console.info("Finish generating meta data")
 }
