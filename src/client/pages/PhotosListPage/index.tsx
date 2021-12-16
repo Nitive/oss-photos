@@ -3,25 +3,8 @@ import { useEffect, useState } from "preact/compat"
 import * as css from "./styles.module.scss"
 import { useStore } from "@nanostores/preact"
 import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
-import { getPreview } from "./utils"
-import { PhotoPopup } from "./photo-popup"
+import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
 import { PhotoPreview } from "./PhotoPreview"
-
-const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
-  await fetch(`http://localhost:3000/photos/${id}/label`, {
-    method: "PATCH",
-    body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
-    headers: {
-      "Content-Type": "application/json;utf-8",
-    },
-  })
-}
-
-const deletePhoto = async (key: string) => {
-  await fetch(`http://localhost:3000/photos/${encodeURIComponent(key)}`, {
-    method: "DELETE",
-  })
-}
 
 interface OpenPhotoState {
   index: number

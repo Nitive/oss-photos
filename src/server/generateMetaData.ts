@@ -47,8 +47,6 @@ const getAllObjects = async () => {
   return objects
 }
 
-type MetaItem = { s3ETag: string; s3Key: string; deleted: boolean }
-
 export const getMetaData = (): Promise<Metadata> => {
   return new Promise((resolve, reject) => {
     s3.getObject(

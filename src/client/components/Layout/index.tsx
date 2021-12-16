@@ -49,6 +49,14 @@ export default function Layout(props: { children: ComponentChildren }) {
                 photos
               </Link>
             </li>
+
+            <li className={css.sidebar_item}>
+              <Link href="/deleted-photos" className={css.sidebar_link}>
+                <Img fill={"#0076FF"} className={css.sidebar_icon} />
+                Recently&nbsp;deleted
+              </Link>
+            </li>
+
             <li className={css.sidebar_item}>
               <Link href="/settings" className={css.sidebar_link}>
                 <Img fill={"#0076FF"} className={css.sidebar_icon} /> Favorites

@@ -26,6 +26,14 @@ router.get("/photos", async (ctx) => {
   }
 })
 
+router.get("/deleted-photos", async (ctx) => {
+  const metaData = await getMetaData()
+  ctx.body = {
+    ...metaData,
+    photos: metaData.photos.filter((photo) => photo.deleted),
+  }
+})
+
 router.patch("/photos/:id/label", (ctx, next) => {
   const { id } = (ctx.request as any).params as { id: string }
   const { labels } = ctx.request.body

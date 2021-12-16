@@ -55,4 +55,5 @@ export interface Photo {
   CompositeImage: string
   DigitalZoomRatio?: number
   CustomRendered?: string
+  deleted: boolean
 }
