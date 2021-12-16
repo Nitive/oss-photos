@@ -1,5 +1,5 @@
 import { Photo } from "../../../types"
-import HearthIcon from "../../icons/HearthIcon"
+import HeartIcon from "../../icons/HeartIcon"
 // @ts-ignore
 import * as css from "./styles.module.scss"
 import { deletePhoto, getPreview, makePhotoFavorite } from "./utils"
@@ -28,7 +28,7 @@ export function PhotoPreview(props: Props) {
         onClick={() => makePhotoFavorite(1, [])}
         className={css.favoriteIcon}
       >
-        <HearthIcon />
+        <HeartIcon />
       </button>
       {/*<button
         style={{ position: "absolute" }}
@@ -38,7 +38,7 @@ export function PhotoPreview(props: Props) {
         }}
       >
         d
-      </button>*/}{" "}
+      </button>*/}
     </div>
   )
 }

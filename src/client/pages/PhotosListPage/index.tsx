@@ -1,5 +1,4 @@
 import { useEffect, useState } from "preact/compat"
-import HearthIcon from "../../icons/HearthIcon"
 // @ts-ignore
 import * as css from "./styles.module.scss"
 import { useStore } from "@nanostores/preact"

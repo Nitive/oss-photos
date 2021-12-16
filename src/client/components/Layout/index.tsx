@@ -4,6 +4,8 @@ import { Link } from "wouter-preact"
 import { useEffect, useState } from "preact/hooks"
 import type { ComponentChildren } from "preact"
 import FillHeartIcon from "../../icons/FillHeartIcon"
+import HeartIcon from "../../icons/HeartIcon"
+import Img from "../../icons/Img"
 
 const headerButtons = ["Small", "Medium", "Large"]
 
@@ -39,13 +41,18 @@ export default function Layout(props: { children: ComponentChildren }) {
       </header>
       <div className={css.layout}>
         <div className={css.sidebar}>
-          <div className={css.logo}>OSS Photos</div>
+          <div className={css.sidebar_title}>Photos</div>
           <ul className={css.menu}>
-            <li className={css.item}>
-              <Link href="/">Photos List</Link>
+            <li className={css.sidebar_item}>
+              <Link href="/" className={css.sidebar_link}>
+                <HeartIcon fill={"#0076FF"} className={css.sidebar_icon} /> All
+                photos
+              </Link>
             </li>
-            <li className={css.item}>
-              <Link href="/settings">Settings</Link>
+            <li className={css.sidebar_item}>
+              <Link href="/settings" className={css.sidebar_link}>
+                <Img fill={"#0076FF"} className={css.sidebar_icon} /> Favorites
+              </Link>
             </li>
           </ul>
         </div>
