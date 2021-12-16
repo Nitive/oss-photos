@@ -18,6 +18,7 @@
     "exec": "ts-node --pretty --transpile-only src/server/index.ts"
   },
   "dependencies": {
+    "@fontsource/fira-sans": "^4.5.0",
     "@koa/cors": "^3.1.0",
     "@nanostores/persistent": "^0.5.0",
     "@nanostores/preact": "^0.1.3",

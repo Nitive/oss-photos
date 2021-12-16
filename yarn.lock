@@ -280,6 +280,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/fira-sans@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "@fontsource/fira-sans@npm:4.5.0"
+  checksum: 3baf6692acd55a4c454ff9fca1366e3b4f809cd6dd25e8ea75daa0e293f70b19074fa967443e944ea1da7dfcc53dc76f69d313898e0a7eb890324711a5a0b90c
+  languageName: node
+  linkType: hard
+
 "@gar/promisify@npm:^1.0.1":
   version: 1.1.2
   resolution: "@gar/promisify@npm:1.1.2"
@@ -5655,6 +5662,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oss-photos@workspace:."
   dependencies:
+    "@fontsource/fira-sans": ^4.5.0
     "@koa/cors": ^3.1.0
     "@nanostores/persistent": ^0.5.0
     "@nanostores/preact": ^0.1.3

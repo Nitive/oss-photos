@@ -1,3 +1,5 @@
+import "@fontsource/fira-sans/400.css"
+import "@fontsource/fira-sans/600.css"
 import { render } from "preact"
 import { App } from "./App"
 
