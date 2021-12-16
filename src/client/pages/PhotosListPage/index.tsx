@@ -4,10 +4,11 @@ import axios from "axios"
 import { useEffect, useState } from "preact/compat"
 import { useStore } from "@nanostores/preact"
 import { $settings } from "../../store"
+import HearthIcon from "../../icons/HearthIcon"
 
 const getPhotos = async ({ endCursor = undefined, limit = 10 } = {}) => {
   const { data } = await axios("http://localhost:3000/photos", {
-    params: { limit },
+    params: { limit, label: ['favorite'] },
   })
 
   return {
@@ -16,12 +17,21 @@ const getPhotos = async ({ endCursor = undefined, limit = 10 } = {}) => {
   }
 }
 
+const makePhotoFavorite = async (id: number, currentLabels: Array<string>) => {
+  const { data } = await axios(`http://localhost:3000/photos/${id}/label`, {
+    method: "PATCH",
+    // TODO: labels can be merged on backend
+    data: { labels: [...currentLabels, 'favorite'] },
+  })
+}
+
 export default function PhotosListPage() {
   const settings = useStore($settings)
   const [photos, setPhotos] = useState([] as any)
   const [photosLoading, setPhotosLoading] = useState(true)
   const [pageInfo, setPageInfo] = useState({})
   const [openPhoto, setOpenPhoto]: any = useState(null)
+
   useEffect(() => {
     setPhotosLoading(true)
     getPhotos().then(({ photos, pageInfo }) => {
@@ -29,7 +39,7 @@ export default function PhotosListPage() {
       setPageInfo(pageInfo)
     })
   }, [])
-  console.log(openPhoto)
+
   return (
     <div className={css.page}>
       <h1 className={css.header}>Photos List</h1>
@@ -117,6 +127,9 @@ export default function PhotosListPage() {
                 }}
               >
                 <img className={css.photo} src={photo.preview} alt="" />
+                <div onClick={() => makePhotoFavorite(1, [])} className={css.favoriteIcon}>
+                  <HearthIcon />
+                </div>
               </div>
             )
           })

@@ -29,6 +29,32 @@
         width: 100%;
         height: auto;
       }
+
+      .favoriteIcon {
+        opacity: 0;
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        transition: opacity .15s linear;
+
+        svg {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          transition: opacity .15s linear;
+        }
+      }
+
+      &:hover {
+        .favoriteIcon {
+          opacity: 1;
+
+          svg {
+            opacity: .6;
+            &:hover { opacity: 1 }
+          }
+        }
+      }
     }
   }
 }
