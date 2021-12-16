@@ -60,8 +60,22 @@
   }
 }
 
-@container (min-width: 150px) and (min-height:  150px) {
-  .favoriteIcon {
-    display: none;
+/*@container (min-width: 150px) and (min-height:  150px) {*/
+.favoriteIcon {
+  display: none;
+}
+/*}*/
+
+.selectedPhoto {
+  position: relative;
+  :after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 4px #0076ff solid;
   }
 }

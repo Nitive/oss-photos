@@ -1,10 +1,10 @@
 import { Photo } from "../../../types"
-import HeartIcon from "../../icons/HeartIcon"
-// @ts-ignore
-import * as css from "./styles.module.scss"
 // @ts-ignore
 import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
-import { deletePhoto, getPreview, makePhotoFavorite } from "../utils"
+import HeartIcon from "../../icons/HeartIcon"
+import { getPreview, makePhotoFavorite } from "../utils"
+// @ts-ignore
+import * as css from "./styles.module.scss"
 
 interface Props {
   photo: Photo
