@@ -133,14 +133,21 @@ const getNewMetaData = async (currentMetaData: Metadata, objects: any) => {
     photos: [],
   }
   for (const object of objects) {
-    const currentMetaDataPhoto = currentMetaData.photos.find(
-      (photo) => photo.s3Key === object.Key
-    )
-    if (!currentMetaDataPhoto || currentMetaDataPhoto.s3ETag !== object.ETag) {
-      const newMetaDataPhoto = await getPhotoMetaData(object.Key, object.ETag)
-      newMetaData.photos.push(newMetaDataPhoto)
-    } else {
-      newMetaData.photos.push(currentMetaDataPhoto)
+    try {
+      const currentMetaDataPhoto = currentMetaData.photos.find(
+        (photo) => photo.s3Key === object.Key
+      )
+      if (
+        !currentMetaDataPhoto ||
+        currentMetaDataPhoto.s3ETag !== object.ETag
+      ) {
+        const newMetaDataPhoto = await getPhotoMetaData(object.Key, object.ETag)
+        newMetaData.photos.push(newMetaDataPhoto)
+      } else {
+        newMetaData.photos.push(currentMetaDataPhoto)
+      }
+    } catch (err) {
+      console.error("Bad photo", object, err)
     }
   }
   return newMetaData
