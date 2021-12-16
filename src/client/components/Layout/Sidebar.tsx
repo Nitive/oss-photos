@@ -4,6 +4,7 @@ import { Link } from "wouter-preact"
 import { useEffect, useState } from "preact/hooks"
 import HeartIcon from "../../icons/HeartIcon"
 import Img from "../../icons/Img"
+import Trash from "../../icons/Trash"
 
 const SideBar = () => {
   const [selectedMenu, setSelectedMenu] = useState("photos")
@@ -23,13 +24,23 @@ const SideBar = () => {
               setSelectedMenu("photos")
             }}
           >
-            <HeartIcon fill={"#0076FF"} className={css.sidebar_icon} /> All
-            photos
+            <HeartIcon fill={"#0076FF"} className={css.sidebar_icon} />
+            All&nbsp;photos
           </Link>
         </li>
         <li className={css.sidebar_item}>
-          <Link href="/deleted-photos" className={css.sidebar_link}>
-            <Img fill={"#0076FF"} className={css.sidebar_icon} />
+          <Link
+            href="/deleted-photos"
+            className={
+              selectedMenu === "deleted"
+                ? `${css.sidebar_link} ${css.sidebar_selected}`
+                : css.sidebar_link
+            }
+            onClick={() => {
+              setSelectedMenu("deleted")
+            }}
+          >
+            <Trash fill={"#0076FF"} className={css.sidebar_icon} />
             Recently&nbsp;deleted
           </Link>
         </li>
