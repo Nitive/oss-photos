@@ -6,6 +6,7 @@ import HeartIcon from "../../icons/HeartIcon"
 import Img from "../../icons/Img"
 import Trash from "../../icons/Trash"
 import Upload from "../Upload"
+import Settings from "../../icons/Settings"
 
 const SideBar = () => {
   const [selectedMenu, setSelectedMenu] = useState("photos")
@@ -58,6 +59,21 @@ const SideBar = () => {
             }}
           >
             <Img fill={"#0076FF"} className={css.sidebar_icon} /> Favorites
+          </Link>
+        </li>
+        <li className={css.sidebar_item}>
+          <Link
+            href="/settings"
+            className={
+              selectedMenu === "settings"
+                ? `${css.sidebar_link} ${css.sidebar_selected}`
+                : css.sidebar_link
+            }
+            onClick={() => {
+              setSelectedMenu("settings")
+            }}
+          >
+            <Settings fill={"#0076FF"} className={css.sidebar_icon} /> Settings
           </Link>
         </li>
         <li className={css.sidebar_item}>

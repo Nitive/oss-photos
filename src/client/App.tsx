@@ -5,6 +5,7 @@ import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
 import Layout from "./components/Layout"
 import { createContext } from "preact"
 import { useContext } from "preact/hooks"
+import Settings from "./pages/Settings"
 
 export interface AppContext {
   // TODO
@@ -24,6 +25,7 @@ export function App(props: { ctx: AppContext }) {
           <Route path="/" component={PhotosListPage} />
           <Route path="/favorites" component={SettingsPage} />
           <Route path="/deleted-photos" component={DeletedPhotosListPage} />
+          <Route path="/settings" component={Settings} />
           <Route path="/:rest*">
             <h1>Page not found</h1>
           </Route>
