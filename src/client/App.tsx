@@ -1,13 +1,13 @@
-import { Route, Switch } from "wouter-preact"
-import PhotosListPage from "./pages/PhotosListPage"
-import SettingsPage from "./pages/FavoritesPhotosListPage"
-import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
-import Layout from "./components/Layout"
 import { createContext } from "preact"
-import { useContext } from "preact/hooks"
-import Settings from "./pages/Settings"
-import { fetchMetaData } from "./store"
 import { useEffect } from "preact/compat"
+import { useContext } from "preact/hooks"
+import { Route, Switch, useLocation } from "wouter-preact"
+import Layout from "./components/Layout"
+import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
+import SettingsPage from "./pages/FavoritesPhotosListPage"
+import PhotosListPage from "./pages/PhotosListPage"
+import Settings from "./pages/Settings"
+import { fetchMetaData, setFilter } from "./store"
 
 export interface AppContext {
   // TODO
@@ -23,6 +23,21 @@ export function App(props: { ctx: AppContext }) {
   useEffect(() => {
     fetchMetaData()
   }, [])
+
+  const location = useLocation()
+  const path = location[0]
+
+  useEffect(() => {
+    setFilter(
+      (
+        {
+          "/": "all",
+          "/deleted-photos": "deleted",
+          "/favorites": "favorites",
+        } as const
+      )[path]!
+    )
+  }, [path])
 
   return (
     <AppCtx.Provider value={props.ctx}>

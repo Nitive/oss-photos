@@ -74,6 +74,14 @@ export function selectPhoto(index: number) {
   })
 }
 
+export function setFilter(filter: Filter) {
+  const prevState = $metaData.get()
+  $metaData.set({
+    ...prevState,
+    filter,
+  })
+}
+
 export function addPhotoToSelection(index: number) {
   const prevState = $metaData.get()
   $metaData.set({
