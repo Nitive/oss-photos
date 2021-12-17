@@ -1,6 +1,6 @@
 import { Route, Switch } from "wouter-preact"
 import PhotosListPage from "./pages/PhotosListPage"
-import SettingsPage from "./pages/SettingsPage"
+import SettingsPage from "./pages/Favorites"
 import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
 import Layout from "./components/Layout"
 import { createContext } from "preact"
@@ -22,7 +22,7 @@ export function App(props: { ctx: AppContext }) {
       <Layout>
         <Switch>
           <Route path="/" component={PhotosListPage} />
-          <Route path="/settings" component={SettingsPage} />
+          <Route path="/favorites" component={SettingsPage} />
           <Route path="/deleted-photos" component={DeletedPhotosListPage} />
           <Route path="/:rest*">
             <h1>Page not found</h1>

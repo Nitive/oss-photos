@@ -47,7 +47,7 @@ const SideBar = () => {
         </li>
         <li className={css.sidebar_item}>
           <Link
-            href="/settings"
+            href="/favorites"
             className={
               selectedMenu === "favorites"
                 ? `${css.sidebar_link} ${css.sidebar_selected}`
