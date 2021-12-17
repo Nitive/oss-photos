@@ -36,7 +36,7 @@ const unlock = () => {
   })
 }
 
-const waitWhileLockedThenLock = async () => {
+export const waitWhileLockedThenLock = async () => {
   console.info("Start waiting for lock key disappearing")
   let lockFileExists = true
   while (lockFileExists) {
@@ -91,7 +91,7 @@ const waitWhileLockedThenLock = async () => {
     console.info("Lock file created")
   } else {
     console.info("Lock file was not created, lets start from the beginning")
-    return waitWhileLockedThenLock()
+    await waitWhileLockedThenLock()
   }
 }
 
@@ -264,8 +264,10 @@ function sortPhotos(photos: Photo[]): Photo[] {
 }
 
 export const generateMetaData = async () => {
+  // await unlock()
   // await deleteMetaData()
   console.info("Start generating meta data")
+  await waitWhileLockedThenLock()
   console.info("Getting current meta data")
   const currentMetaData = await getMetaData()
   console.info("Getting current objects")
@@ -278,6 +280,7 @@ export const generateMetaData = async () => {
     photos: sortPhotos(newMetaData.photos),
   })
   console.info("Finish generating meta data")
+  await unlock()
   return newMetaData
 }
 
