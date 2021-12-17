@@ -131,13 +131,18 @@ interface Bindings {
   [key: string]: Binding
 }
 
+const down = createMoveHandlers((i, meta) => i + meta.columns)
+const up = createMoveHandlers((i, meta) => i - meta.columns)
+const left = createMoveHandlers((i) => i - 1)
+const right = createMoveHandlers((i) => i + 1)
+
 const keypressBindings: Bindings = {
   0: createMoveHandlers((i, meta) => i - (i % meta.columns)),
   $: createMoveHandlers((i, meta) => i + meta.columns - (i % meta.columns) - 1),
-  j: createMoveHandlers((i, meta) => i + meta.columns),
-  k: createMoveHandlers((i, meta) => i - meta.columns),
-  l: createMoveHandlers((i) => i + 1),
-  h: createMoveHandlers((i) => i - 1),
+  j: down,
+  k: up,
+  l: right,
+  h: left,
   v: {
     normal(meta) {
       return { ...meta, mode: "visual" }
@@ -162,7 +167,10 @@ const keypressBindings: Bindings = {
 }
 
 const keydownBindings: Bindings = {
-  // Escape: {},
+  ArrowDown: down,
+  ArrowUp: up,
+  ArrowLeft: left,
+  ArrowRight: right,
 }
 
 const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
