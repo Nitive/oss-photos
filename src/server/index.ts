@@ -65,7 +65,8 @@ router.post("/upload", async (ctx: any) => {
     const filePromises = files.map((file: any) => {
       const { path: filePath, name, type } = file
       const body = fs.createReadStream(filePath)
-      const fileName = path.parse(name).name + "-" + getRandomString() + path.parse(name).ext
+      const fileName =
+        path.parse(name).name + "-" + getRandomString() + path.parse(name).ext
       const key = path.join(config.prefix, fileName)
       const params = {
         Bucket: config.bucket,
@@ -133,6 +134,13 @@ router.get("/photo", async (ctx) => {
   ctx.header.etag = data.ETag
   ctx.header["cache-control"] = "Cache-Control: max-age=31557600, public"
   ctx.status = 200
+})
+
+router.post("/password", async (ctx) => {
+  const data = (ctx.request as any).body
+  const { password } = JSON.parse(data)
+
+  ctx.body = { success: true }
 })
 
 app.use(router.routes()).use(router.allowedMethods())

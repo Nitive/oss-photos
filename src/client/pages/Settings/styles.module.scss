@@ -1,0 +1,38 @@
+.settings {
+  padding: 30px;
+
+  &_title {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  &_form {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  &_input {
+    margin-bottom: 10px;
+  }
+
+  &_button {
+    font-size: 18px;
+    background-color: #0076ff;
+    border: 0;
+    cursor: pointer;
+    width: 150px;
+    padding: 10px;
+
+    &:hover {
+      background-color: green;
+    }
+  }
+
+  &_error {
+    color: red;
+    margin-bottom: 10px;
+  }
+}
