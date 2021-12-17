@@ -16,12 +16,7 @@ export const $metaData = atom<MetadataState>({
   mode: "normal",
   columns: 25,
 })
-export const $deletedMetaData = atom({
-  generatedAt: "",
-  photos: [] as Photo[],
-})
 export const $metaDataLoading = atom(true)
-export const $deletedMetaDataLoading = atom(true)
 
 export async function fetchMetaData() {
   $metaDataLoading.set(true)
@@ -29,14 +24,6 @@ export async function fetchMetaData() {
   const metaData = await res.json()
   $metaData.set({ ...$metaData.get(), ...metaData })
   $metaDataLoading.set(false)
-}
-
-export async function fetchDeletedMetaData() {
-  $deletedMetaDataLoading.set(true)
-  const res = await fetch("http://localhost:3000/deleted-photos")
-  const metaData = await res.json()
-  $deletedMetaData.set(metaData)
-  $deletedMetaDataLoading.set(false)
 }
 
 export async function setMetaData(metaData: Metadata) {

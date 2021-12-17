@@ -5,7 +5,7 @@ import { Photo } from "../../../types"
 import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
 import HeartIcon from "../../icons/HeartIcon"
 import { $metaData, selectPhoto } from "../../store"
-import { getPreview, makePhotoFavorite } from "../utils"
+import { getPreview, makePhotoFavorite } from "../../utils"
 // @ts-ignore
 import * as css from "./styles.module.scss"
 

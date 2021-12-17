@@ -4,7 +4,7 @@ import * as css from "./styles.module.scss"
 import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
-import { getPreview } from "../../pages/utils"
+import { getPreview } from "../../utils"
 import { $metaData } from "../../store"
 
 export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {

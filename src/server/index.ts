@@ -47,18 +47,7 @@ app.use(
 
 router.get("/photos", async (ctx) => {
   const metaData = await getMetaData()
-  ctx.body = {
-    ...metaData,
-    photos: metaData.photos.filter((photo) => !photo.deleted),
-  }
-})
-
-router.get("/deleted-photos", async (ctx) => {
-  const metaData = await getMetaData()
-  ctx.body = {
-    ...metaData,
-    photos: metaData.photos.filter((photo) => photo.deleted),
-  }
+  ctx.body = metaData
 })
 
 router.post("/upload", async (ctx: any) => {

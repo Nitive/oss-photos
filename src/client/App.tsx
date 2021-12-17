@@ -1,11 +1,13 @@
 import { Route, Switch } from "wouter-preact"
 import PhotosListPage from "./pages/PhotosListPage"
-import SettingsPage from "./pages/Favorites"
+import SettingsPage from "./pages/FavoritesPhotosListPage"
 import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
 import Layout from "./components/Layout"
 import { createContext } from "preact"
 import { useContext } from "preact/hooks"
 import Settings from "./pages/Settings"
+import { fetchMetaData } from "./store"
+import { useEffect } from "preact/compat"
 
 export interface AppContext {
   // TODO
@@ -18,6 +20,10 @@ export function useAppContext() {
 }
 
 export function App(props: { ctx: AppContext }) {
+  useEffect(() => {
+    fetchMetaData()
+  }, [])
+
   return (
     <AppCtx.Provider value={props.ctx}>
       <Layout>
