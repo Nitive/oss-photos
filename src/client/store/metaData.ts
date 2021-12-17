@@ -1,5 +1,5 @@
 import { atom } from "nanostores"
-import { Metadata } from "../../types"
+import { Metadata, Photo } from "../../types"
 import { getPreview } from "../utils"
 
 export type Mode = "normal" | "visual"
@@ -69,6 +69,49 @@ export function setFavoritesForPhoto(s3Key: string, favorite: boolean) {
       return photo.s3Key === s3Key ? { ...photo, favorite } : photo
     }),
   })
+}
+
+// Subscriptions
+
+function isChanged(a: Photo, b: Photo) {
+  if (!a || !b) return false
+  return a.favorite !== b.favorite || a.deleted !== b.deleted
+}
+
+let savedMeta = $metaData.get()
+$metaData.subscribe((meta) => {
+  const changed = meta.photos.filter((p, i) =>
+    isChanged(p, savedMeta.photos[i])
+  )
+
+  if (changed.length > 0) {
+    patchMetaData({
+      photos: changed.map((p) => ({
+        s3Key: p.s3Key,
+        favorite: p.favorite,
+        deleted: p.deleted,
+      })),
+    })
+      .then((data) => {
+        console.log("Saved", data)
+        savedMeta = meta
+      })
+      .catch(console.error)
+  }
+})
+
+export async function patchMetaData(meta: {
+  photos: Pick<Photo, "s3Key" | "deleted" | "favorite">[]
+}) {
+  const res = await fetch("http://localhost:3000/photos/batch", {
+    method: "PATCH",
+    body: JSON.stringify(meta),
+  })
+  if (res.status !== 200) {
+    console.error(await res.text())
+    $metaDataLoading.set(false)
+    return
+  }
 }
 
 // Vim mode
@@ -184,6 +227,7 @@ export function toggleFavoritesStatus(meta: MetadataState): MetadataState {
 }
 
 export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
+  if (meta.selectedPhoto === undefined) return meta
   return {
     ...meta,
     photos: meta.photos.map((photo, i) => {
@@ -192,6 +236,8 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
       }
       return photo
     }),
+    selectedPhotos: [meta.selectedPhotos[0]],
+    mode: "normal",
   }
 }
 

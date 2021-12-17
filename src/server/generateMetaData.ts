@@ -16,7 +16,7 @@ const lockFileKey = path.join(
 )
 
 const initialMetaData = {
-  generatedAt: new Date().toISOString(),
+  generatedAt: "",
   photos: [],
 }
 
@@ -145,22 +145,24 @@ export const getMetaData = (): Promise<Metadata> => {
   })
 }
 
-export const programmableDeleteObject = async (key: string) => {
-  const meta = await getMetaData()
-  const photos = meta.photos.map((photo) => {
-    return photo.s3Key === key ? { ...photo, deleted: true } : photo
-  })
-
-  return uploadNewMetaData({ ...meta, photos })
-}
-
-export const makePhotoFavorite = async (key: string) => {
-  const meta = await getMetaData()
-  const photos = meta.photos.map((photo) => {
-    return photo.s3Key === key ? { ...photo, favorite: true } : photo
-  })
-
-  return uploadNewMetaData({ ...meta, photos })
+export const patchPhotos = async (
+  patches: Pick<Photo, "s3Key" | "deleted" | "favorite">[]
+) => {
+  await waitWhileLockedThenLock()
+  try {
+    const meta = await getMetaData()
+    return uploadNewMetaData({
+      ...meta,
+      photos: meta.photos.map((photo) => {
+        const patch = patches.find((p) => p.s3Key === photo.s3Key)
+        return patch
+          ? { ...photo, favorite: patch.favorite, deleted: patch.deleted }
+          : photo
+      }),
+    })
+  } finally {
+    await unlock()
+  }
 }
 
 export const deleteMetaData = () => {
@@ -218,7 +220,10 @@ const uploadNewMetaData = async (newMetaData: Metadata) => {
   const uploadParams = {
     Bucket: process.env.S3_BUCKET as string,
     Key: metaDataKey,
-    Body: JSON.stringify(newMetaData),
+    Body: JSON.stringify({
+      ...newMetaData,
+      generatedAt: new Date().toISOString(),
+    }),
     ContentType: "application/json",
   }
   return new Promise((resolve, reject) => {
@@ -231,7 +236,7 @@ const uploadNewMetaData = async (newMetaData: Metadata) => {
 
 const getNewMetaData = async (currentMetaData: Metadata, objects: any) => {
   const newMetaData: Metadata = {
-    generatedAt: new Date().toISOString(),
+    generatedAt: "",
     photos: [],
   }
   for (const object of objects) {

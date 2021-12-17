@@ -9,7 +9,7 @@ import {
   selectPhoto,
   setFavoritesForPhoto,
 } from "../../store"
-import { getPreview, makePhotoFavorite } from "../../utils"
+import { getPreview } from "../../utils"
 import css from "./styles.module.scss"
 
 interface Props {
@@ -58,23 +58,20 @@ export function PhotoPreview(props: Props) {
         style={{ objectFit: metaData.gridMode === "small" ? "cover" : "fit" }}
         alt=""
       />
-      <button
-        onClick={() => {
-          setFavoritesForPhoto(props.photo.s3Key, !props.photo.favorite)
-        }}
-        className={cx(css.favoriteIcon, { [css.filled]: props.photo.favorite })}
-      >
-        <HeartIcon filled={props.photo.favorite} />
-      </button>
-      {/*<button
-        style={{ position: "absolute" }}
-        onClick={(event) => {
-          event.stopPropagation()
-          deletePhoto(props.photo.s3Key)
-        }}
-      >
-        d
-      </button>*/}
+      {metaData.gridMode !== "small" && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            setFavoritesForPhoto(props.photo.s3Key, !props.photo.favorite)
+          }}
+          onDblClick={(e) => e.stopPropagation()}
+          className={cx(css.favoriteIcon, {
+            [css.filled]: props.photo.favorite,
+          })}
+        >
+          <HeartIcon filled={props.photo.favorite} />
+        </button>
+      )}
     </div>
   )
 }

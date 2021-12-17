@@ -1,27 +1,27 @@
-import exifr from "exifr"
 import * as cors from "@koa/cors"
+import * as assert from "assert"
 import { CronJob } from "cron"
 import "dotenv/config"
+import exifr from "exifr"
+import * as fs from "fs"
 import * as Koa from "koa"
 import * as koaBody from "koa-body"
 import * as Router from "koa-router"
-import {
-  addPhotosToMetaData,
-  generateMetaData,
-  getMetaData,
-  isPassordExists,
-  makePhotoFavorite,
-  programmableDeleteObject,
-  unlock,
-  uploadPassword,
-} from "./generateMetaData"
-import s3, { config } from "./s3"
 import * as path from "path"
-import * as fs from "fs"
-import { createHash, matchPassword } from "./utils"
-import { waitWhileLockedThenLock } from "./generateMetaData"
 import { Photo } from "../types"
 import { decrypt, encrypt } from "./crypt"
+import {
+    addPhotosToMetaData,
+    generateMetaData,
+    getMetaData,
+    isPassordExists,
+    patchPhotos,
+    unlock,
+    uploadPassword,
+    waitWhileLockedThenLock
+} from "./generateMetaData"
+import s3, { config } from "./s3"
+import { createHash, matchPassword } from "./utils"
 
 const app = new Koa()
 const router = new Router()
@@ -132,20 +132,13 @@ router.post("/upload", async (ctx: any) => {
   }
 })
 
-router.post("/photos/:id/favorite", async (ctx, next) => {
-  const { id } = (ctx.request as any).params as { id: string }
-  await makePhotoFavorite(id)
+router.patch("/photos/batch", async (ctx) => {
+  const { photos } = ctx.request.query as any
+  assert.ok(Array.isArray(photos), "photos must be an array")
+
+  await patchPhotos(photos)
 
   ctx.body = { success: true }
-  next()
-})
-
-router.delete("/photos/:id", async (ctx, next) => {
-  const { id } = (ctx.request as any).params as { id: string }
-  await programmableDeleteObject(id)
-
-  ctx.body = { success: true }
-  next()
 })
 
 router.get("/photo", async (ctx) => {
