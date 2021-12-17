@@ -143,6 +143,15 @@ const up = createMoveHandlers((i, meta) => i - meta.columns)
 const left = createMoveHandlers((i) => i - 1)
 const right = createMoveHandlers((i) => i + 1)
 
+function toNormalMode(meta: MetadataState): MetadataState {
+  return {
+    ...meta,
+    mode: "normal",
+    selectedPhotos:
+      typeof meta.selectedPhoto === "number" ? [meta.selectedPhoto] : [],
+  }
+}
+
 const keypressBindings: Bindings = {
   0: createMoveHandlers((i, meta) => i - (i % meta.columns)),
   $: createMoveHandlers((i, meta) => i + meta.columns - (i % meta.columns) - 1),
@@ -154,14 +163,7 @@ const keypressBindings: Bindings = {
     normal(meta) {
       return { ...meta, mode: "visual" }
     },
-    visual(meta) {
-      return {
-        ...meta,
-        mode: "normal",
-        selectedPhotos:
-          typeof meta.selectedPhoto === "number" ? [meta.selectedPhoto] : [],
-      }
-    },
+    visual: toNormalMode,
   },
   o: {
     visual(meta) {
@@ -178,6 +180,9 @@ const keydownBindings: Bindings = {
   ArrowUp: up,
   ArrowLeft: left,
   ArrowRight: right,
+  Escape: {
+    visual: toNormalMode,
+  },
 }
 
 const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
