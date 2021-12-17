@@ -4,6 +4,7 @@ import { useRef, useState } from "preact/hooks"
 import { setMetaData } from "../../store"
 import cn from "classnames"
 import Img from "../../icons/Img"
+import UploadIcon from "../../icons/UploadIcon"
 
 export default function Upload() {
   const inputEl = useRef(null as any)
@@ -45,7 +46,7 @@ export default function Upload() {
           }
         }}
       />
-      <Img fill={"#0076FF"} className={css.icon} />{" "}
+      <UploadIcon />{" "}
       {loading ? "Uploading..." : "Upload"}
     </label>
   )

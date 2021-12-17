@@ -12,6 +12,7 @@ const SideBar = () => {
   const [selectedMenu, setSelectedMenu] = useState("photos")
   return (
     <div className={css.sidebar}>
+      <div className={css.topSection}>
       <div className={css.sidebar_title}>Photos</div>
       <ul className={css.menu}>
         <li className={css.sidebar_item}>
@@ -26,7 +27,7 @@ const SideBar = () => {
               setSelectedMenu("photos")
             }}
           >
-            <HeartIcon fill={"#0076FF"} className={css.sidebar_icon} />
+            <Img fill={"#0076FF"} className={css.sidebar_icon} />
             All&nbsp;photos
           </Link>
         </li>
@@ -58,7 +59,7 @@ const SideBar = () => {
               setSelectedMenu("favorites")
             }}
           >
-            <Img fill={"#0076FF"} className={css.sidebar_icon} /> Favorites
+            <HeartIcon fill={"#0076FF"} className={css.sidebar_icon} /> Favorites
           </Link>
         </li>
         <li className={css.sidebar_item}>
@@ -76,10 +77,11 @@ const SideBar = () => {
             <Settings fill={"#0076FF"} className={css.sidebar_icon} /> Settings
           </Link>
         </li>
-        <li className={css.sidebar_item}>
-          <Upload />
-        </li>
       </ul>
+      </div>
+      <div className={css.bottomSection}>
+        <Upload />
+      </div>
     </div>
   )
 }
