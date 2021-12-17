@@ -4,8 +4,7 @@ import { Photo } from "../../../types"
 import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
 import { $metaData, $metaDataLoading } from "../../store"
 import { PhotoPreview } from "./PhotoPreview"
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import css from "./styles.module.scss"
 
 interface OpenPhotoState {
   index: number

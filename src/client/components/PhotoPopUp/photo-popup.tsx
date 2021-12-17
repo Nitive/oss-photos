@@ -1,6 +1,5 @@
 import { useStore } from "@nanostores/preact"
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import css from "./styles.module.scss"
 import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
@@ -49,7 +48,10 @@ export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
       <img
         className={css.open_photo}
         style={{ opacity: openPhoto.show ? 1 : 0 }}
-        src={getPreview(metaData.photos[openPhoto.index].s3Key)}
+        src={getPreview(
+          metaData.photos[openPhoto.index].s3Key,
+          metaData.gridMode
+        )}
         onLoad={() => setOpenPhoto({ index: openPhoto.index, show: true })}
         alt=""
       />

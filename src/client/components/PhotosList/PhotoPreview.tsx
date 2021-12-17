@@ -1,13 +1,16 @@
 import { useStore } from "@nanostores/preact"
 import cx from "classnames"
 import { Photo } from "../../../types"
-// @ts-ignore
-import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
+import popupcss from "../../components/PhotoPopUp/styles.module.scss"
 import HeartIcon from "../../icons/HeartIcon"
-import { $metaData, addPhotoToSelection, selectPhoto } from "../../store"
+import {
+  $metaData,
+  addPhotoToSelection,
+  selectPhoto,
+  setFavoritesForPhoto,
+} from "../../store"
 import { getPreview, makePhotoFavorite } from "../../utils"
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import css from "./styles.module.scss"
 
 interface Props {
   photo: Photo
@@ -41,7 +44,7 @@ export function PhotoPreview(props: Props) {
           selectPhoto(props.index)
         }
       }}
-      onDblClick={(e) => {
+      onDblClick={() => {
         props.setOpenPhoto({ index: props.index, show: false })
         const paddingOffset =
           window.innerWidth - document.body.offsetWidth + "px"
@@ -56,10 +59,12 @@ export function PhotoPreview(props: Props) {
         alt=""
       />
       <button
-        onClick={() => makePhotoFavorite(props.photo.s3Key)}
-        className={css.favoriteIcon}
+        onClick={() => {
+          setFavoritesForPhoto(props.photo.s3Key, !props.photo.favorite)
+        }}
+        className={cx(css.favoriteIcon, { [css.filled]: props.photo.favorite })}
       >
-        <HeartIcon />
+        <HeartIcon filled={props.photo.favorite} />
       </button>
       {/*<button
         style={{ position: "absolute" }}

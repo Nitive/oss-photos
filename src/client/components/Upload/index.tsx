@@ -1,5 +1,4 @@
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import css from "./styles.module.scss"
 import { useRef, useState } from "preact/hooks"
 import { setMetaData } from "../../store"
 import cn from "classnames"
@@ -46,8 +45,7 @@ export default function Upload() {
           }
         }}
       />
-      <UploadIcon />{" "}
-      {loading ? "Uploading..." : "Upload"}
+      <UploadIcon /> {loading ? "Uploading..." : "Upload"}
     </label>
   )
 }

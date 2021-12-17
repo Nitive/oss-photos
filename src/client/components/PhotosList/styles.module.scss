@@ -37,10 +37,15 @@
         cursor: pointer;
         transition: opacity 0.15s linear;
       }
+
+      &.filled {
+        opacity: 1;
+        transition: none;
+      }
     }
 
     &:hover {
-      .favoriteIcon {
+      .favoriteIcon:not(.filled) {
         opacity: 1;
 
         svg {
@@ -54,11 +59,11 @@
   }
 }
 
-/*@container (min-width: 150px) and (min-height:  150px) {*/
-.favoriteIcon {
-  display: none;
+@container (min-width: 150px) and (min-height:  150px) {
+  .favoriteIcon {
+    display: none;
+  }
 }
-/*}*/
 
 .selectedPhoto {
   position: relative;

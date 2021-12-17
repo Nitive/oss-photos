@@ -1,8 +1,7 @@
-// @ts-ignore
-import * as css from "./styles.module.scss"
 import { useEffect, useState } from "preact/hooks"
+import css from "./styles.module.scss"
 
-const setPassoword = async (password: string) => {
+const setPassword = async (password: string) => {
   await fetch("http://localhost:3000/password", {
     method: "POST",
     body: JSON.stringify({ password }),
@@ -54,7 +53,7 @@ const Settings = () => {
           } else {
             passwordExists
               ? changePassoword(secondPassword, oldPassword)
-              : setPassoword(secondPassword)
+              : setPassword(secondPassword)
           }
         }}
       >

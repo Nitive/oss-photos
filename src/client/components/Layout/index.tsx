@@ -1,5 +1,4 @@
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import css from "./styles.module.scss"
 import type { ComponentChildren } from "preact"
 import SideBar from "./Sidebar"
 import Header from "./Header"

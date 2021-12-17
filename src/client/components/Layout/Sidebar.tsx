@@ -1,13 +1,11 @@
-// @ts-ignore
-import * as css from "./styles.module.scss"
+import cn from "classnames"
 import { Link, useLocation } from "wouter-preact"
-import { useEffect, useState } from "preact/hooks"
 import HeartIcon from "../../icons/HeartIcon"
 import Img from "../../icons/Img"
+import Settings from "../../icons/Settings"
 import Trash from "../../icons/Trash"
 import Upload from "../Upload"
-import Settings from "../../icons/Settings"
-import cn from "classnames"
+import css from "./styles.module.scss"
 
 const SideBar = () => {
   const [location] = useLocation()

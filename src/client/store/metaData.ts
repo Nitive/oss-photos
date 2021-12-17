@@ -61,28 +61,12 @@ export function addPhotoToSelection(index: number) {
   })
 }
 
-export function addSelectedPhotosToFavorites() {
+export function setFavoritesForPhoto(s3Key: string, favorite: boolean) {
   const prevState = $metaData.get()
   $metaData.set({
     ...prevState,
-    photos: prevState.photos.map((photo, i) => {
-      if (prevState.selectedPhotos.includes(i)) {
-        return { ...photo, favorite: true }
-      }
-      return photo
-    }),
-  })
-}
-
-export function deleteSelectedPhotos() {
-  const prevState = $metaData.get()
-  $metaData.set({
-    ...prevState,
-    photos: prevState.photos.map((photo, i) => {
-      if (prevState.selectedPhotos.includes(i)) {
-        return { ...photo, deleted: true }
-      }
-      return photo
+    photos: prevState.photos.map((photo) => {
+      return photo.s3Key === s3Key ? { ...photo, favorite } : photo
     }),
   })
 }
@@ -181,6 +165,36 @@ function toNormalMode(meta: MetadataState): MetadataState {
   }
 }
 
+export function toggleFavoritesStatus(meta: MetadataState): MetadataState {
+  // If there are at least one not favorite, add it to favorites
+  // otherwise remove all selected from favorites
+  const shouldAddToFavorites = !meta.selectedPhotos.every(
+    (i) => meta.photos[i].favorite
+  )
+
+  return {
+    ...meta,
+    photos: meta.photos.map((photo, i) => {
+      if (meta.selectedPhotos.includes(i)) {
+        return { ...photo, favorite: shouldAddToFavorites }
+      }
+      return photo
+    }),
+  }
+}
+
+export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
+  return {
+    ...meta,
+    photos: meta.photos.map((photo, i) => {
+      if (meta.selectedPhotos.includes(i)) {
+        return { ...photo, deleted: true }
+      }
+      return photo
+    }),
+  }
+}
+
 const keypressBindings: Bindings = {
   0: createMoveHandlers((i, meta) => i - (i % meta.columns)),
   $: createMoveHandlers((i, meta) => i + meta.columns - (i % meta.columns) - 1),
@@ -202,6 +216,18 @@ const keypressBindings: Bindings = {
       }
     },
   },
+  f: {
+    normal: toggleFavoritesStatus,
+    visual: toggleFavoritesStatus,
+  },
+  x: {
+    normal: deleteSelectedPhotos,
+    visual: deleteSelectedPhotos,
+  },
+  d: {
+    normal: deleteSelectedPhotos,
+    visual: deleteSelectedPhotos,
+  },
 }
 
 const keydownBindings: Bindings = {
@@ -216,6 +242,7 @@ const keydownBindings: Bindings = {
 
 const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
   const prevState = $metaData.get()
+
   const newState = bindings[e.key]?.[prevState.mode]?.(prevState)
   if (newState) $metaData.set(newState)
   if (newState?.selectedPhoto) {

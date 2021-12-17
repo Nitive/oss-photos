@@ -1,8 +1,7 @@
-// @ts-ignore
-import * as css from "./styles.module.scss"
-import FillHeartIcon from "../../icons/FillHeartIcon"
-import { $metaData, changeGridMode, MetadataState } from "../../store"
 import { useStore } from "@nanostores/preact"
+import HeartIcon from "../../icons/HeartIcon"
+import { $metaData, changeGridMode, MetadataState } from "../../store"
+import css from "./styles.module.scss"
 
 const headerButtons = ["small", "medium", "large"] as Array<
   MetadataState["gridMode"]
@@ -34,7 +33,7 @@ const Header = () => {
             )
           })}
         </div>
-        <FillHeartIcon fill={"red"} className={css.header_heart} />
+        <HeartIcon filled className={css.header_heart} />
       </div>
     </header>
   )
