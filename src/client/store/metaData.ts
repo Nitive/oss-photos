@@ -1,5 +1,9 @@
 import { atom } from "nanostores"
-import { Metadata, Photo } from "../../types"
+import { Metadata } from "../../types"
+import { getPreview } from "../utils"
+
+export type Mode = "normal" | "visual"
+export type GridMode = "small" | "medium" | "large"
 
 export interface MetadataState extends Metadata {
   selectedPhoto: number | undefined
@@ -33,20 +37,21 @@ export async function fetchMetaData() {
   $metaDataLoading.set(false)
 }
 
-export async function setMetaData(metaData: Metadata) {
+export function setMetaData(metaData: Metadata) {
   $metaData.set({ ...$metaData.get(), ...metaData })
 }
 
-export async function selectPhoto(index: number) {
+export function selectPhoto(index: number) {
   const prevState = $metaData.get()
   $metaData.set({
     ...prevState,
+    mode: "normal",
     selectedPhoto: index,
     selectedPhotos: [index],
   })
 }
 
-export async function addPhotoToSelection(index: number) {
+export function addPhotoToSelection(index: number) {
   const prevState = $metaData.get()
   $metaData.set({
     ...prevState,
@@ -56,9 +61,33 @@ export async function addPhotoToSelection(index: number) {
   })
 }
 
-// Vim mode
+export function addSelectedPhotosToFavorites() {
+  const prevState = $metaData.get()
+  $metaData.set({
+    ...prevState,
+    photos: prevState.photos.map((photo, i) => {
+      if (prevState.selectedPhotos.includes(i)) {
+        return { ...photo, favorite: true }
+      }
+      return photo
+    }),
+  })
+}
 
-type Mode = "normal" | "visual"
+export function deleteSelectedPhotos() {
+  const prevState = $metaData.get()
+  $metaData.set({
+    ...prevState,
+    photos: prevState.photos.map((photo, i) => {
+      if (prevState.selectedPhotos.includes(i)) {
+        return { ...photo, deleted: true }
+      }
+      return photo
+    }),
+  })
+}
+
+// Vim mode
 
 function findAnotherEdge(meta: MetadataState): number {
   if (meta.selectedPhotos.length === 1) {
@@ -189,6 +218,17 @@ const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
   const prevState = $metaData.get()
   const newState = bindings[e.key]?.[prevState.mode]?.(prevState)
   if (newState) $metaData.set(newState)
+  if (newState?.selectedPhoto) {
+    const photo = newState.photos[newState.selectedPhoto]
+    const photoElement = document.querySelector(
+      `[src="${getPreview(photo.s3Key, newState.gridMode)}"]`
+    )
+    photoElement?.scrollIntoView?.({
+      behavior: "smooth",
+      block: "center",
+      inline: "center",
+    })
+  }
 }
 
 window.addEventListener("keypress", handleKey(keypressBindings))

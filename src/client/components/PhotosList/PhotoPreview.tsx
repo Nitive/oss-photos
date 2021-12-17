@@ -30,7 +30,9 @@ export function PhotoPreview(props: Props) {
       }}
       class={cx(css.item, {
         [css.currentPhoto]: metaData.selectedPhoto === props.index,
-        [css.selectedPhoto]: metaData.selectedPhotos.includes(props.index),
+        [css.selectedPhoto]:
+          metaData.mode === "visual" &&
+          metaData.selectedPhotos.includes(props.index),
       })}
       onClick={(e) => {
         if (e.shiftKey) {
@@ -47,7 +49,12 @@ export function PhotoPreview(props: Props) {
         document.body.classList.add(popupcss.disable_scroll)
       }}
     >
-      <img className={css.photo} src={getPreview(props.photo.s3Key)} alt="" />
+      <img
+        className={css.photo}
+        src={getPreview(props.photo.s3Key, gridMode)}
+        style={{ objectFit: metaData.gridMode === "small" ? "cover" : "fit" }}
+        alt=""
+      />
       <button
         onClick={() => makePhotoFavorite(props.photo.s3Key)}
         className={css.favoriteIcon}

@@ -112,7 +112,9 @@ const getPhotoMetaData = async (s3Key: string, s3ETag: string) => {
             resolve({
               s3Key,
               s3ETag,
-              ...exifrMetaData,
+              exif: exifrMetaData,
+              deleted: false,
+              favorite: false,
             })
           })
           .catch((err) => {
@@ -120,6 +122,9 @@ const getPhotoMetaData = async (s3Key: string, s3ETag: string) => {
             resolve({
               s3Key,
               s3ETag,
+              exif: {},
+              deleted: false,
+              favorite: false,
             })
           })
       }
@@ -171,8 +176,8 @@ const getNewMetaData = async (currentMetaData: Metadata, objects: any) => {
 function sortPhotos(photos: Photo[]): Photo[] {
   return photos.slice().sort((a, b) => {
     return (
-      new Date(b.DateTimeOriginal).getTime() -
-      new Date(a.DateTimeOriginal).getTime()
+      (new Date(b.exif?.DateTimeOriginal || "").getTime() || 0) -
+      (new Date(a.exif?.DateTimeOriginal || "").getTime() || 0)
     )
   })
 }
