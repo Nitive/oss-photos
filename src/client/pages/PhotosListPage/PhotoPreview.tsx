@@ -1,7 +1,10 @@
+import { useStore } from "@nanostores/preact"
+import cx from "classnames"
 import { Photo } from "../../../types"
 // @ts-ignore
 import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
 import HeartIcon from "../../icons/HeartIcon"
+import { $metaData, selectPhoto } from "../../store"
 import { getPreview, makePhotoFavorite } from "../utils"
 // @ts-ignore
 import * as css from "./styles.module.scss"
@@ -13,11 +16,17 @@ interface Props {
 }
 
 export function PhotoPreview(props: Props) {
+  const metaData = useStore($metaData)
   return (
     <div
-      className={css.item}
-      key={props.photo.s3Key}
-      onClick={() => {
+      class={cx(css.item, {
+        [css.currentPhoto]: metaData.selectedPhoto === props.index,
+        [css.selectedPhoto]: metaData.selectedPhotos.includes(props.index),
+      })}
+      onClick={(e) => {
+        selectPhoto(props.index)
+      }}
+      onDblClick={(e) => {
         props.setOpenPhoto({ index: props.index, show: false })
         const paddingOffset =
           window.innerWidth - document.body.offsetWidth + "px"

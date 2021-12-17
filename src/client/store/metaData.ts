@@ -39,8 +39,16 @@ export async function fetchDeletedMetaData() {
   $deletedMetaDataLoading.set(false)
 }
 
-export async function setMetaData(metaData: any) {
+export async function setMetaData(metaData: Metadata) {
   $metaData.set({ ...$metaData.get(), ...metaData })
+}
+
+export async function selectPhoto(index: number) {
+  $metaData.set({
+    ...$metaData.get(),
+    selectedPhoto: index,
+    selectedPhotos: [index],
+  })
 }
 
 // Vim mode
