@@ -20,7 +20,7 @@ const initialMetaData = {
   photos: [],
 }
 
-const unlock = () => {
+export const unlock = () => {
   return new Promise((resolve, reject) => {
     s3.deleteObject(
       {
@@ -54,6 +54,7 @@ export const waitWhileLockedThenLock = async () => {
             console.error(err)
             resolve(true)
           } else {
+            console.log('Lock file exists')
             resolve(true)
           }
         }
@@ -263,24 +264,44 @@ function sortPhotos(photos: Photo[]): Photo[] {
   })
 }
 
+
+export const addPhotosToMetaData = async (photos: Photo[]) => {
+  console.info("Start adding photos to meta data")
+  console.info("Getting current meta data")
+  const currentMetaData = await getMetaData()
+  console.info("Uploading new meta data")
+  const newMetaData = {
+    ...currentMetaData,
+    generatedAt: new Date().toISOString(),
+    photos: sortPhotos([...currentMetaData.photos, ...photos]),
+  }
+  await uploadNewMetaData(newMetaData)
+  console.info("Finish adding photos to meta data")
+  return newMetaData
+}
+
 export const generateMetaData = async () => {
   // await unlock()
   // await deleteMetaData()
   console.info("Start generating meta data")
+  let newMetaData
   await waitWhileLockedThenLock()
-  console.info("Getting current meta data")
-  const currentMetaData = await getMetaData()
-  console.info("Getting current objects")
-  const objects = await getAllObjects()
-  console.info("Generating new meta data")
-  const newMetaData = await getNewMetaData(currentMetaData, objects)
-  console.info("Uploading new meta data")
-  await uploadNewMetaData({
-    ...newMetaData,
-    photos: sortPhotos(newMetaData.photos),
-  })
-  console.info("Finish generating meta data")
-  await unlock()
+  try {
+    console.info("Getting current meta data")
+    const currentMetaData = await getMetaData()
+    console.info("Getting current objects")
+    const objects = await getAllObjects()
+    console.info("Generating new meta data")
+    newMetaData = await getNewMetaData(currentMetaData, objects)
+    console.info("Uploading new meta data")
+    await uploadNewMetaData({
+      ...newMetaData,
+      photos: sortPhotos(newMetaData.photos),
+    })
+    console.info("Finish generating meta data")
+  } finally {
+    await unlock()
+  }
   return newMetaData
 }
 

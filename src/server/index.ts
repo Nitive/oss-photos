@@ -1,3 +1,4 @@
+import exifr from "exifr"
 import * as cors from "@koa/cors"
 import { CronJob } from "cron"
 import "dotenv/config"
@@ -5,17 +6,20 @@ import * as Koa from "koa"
 import * as koaBody from "koa-body"
 import * as Router from "koa-router"
 import {
+  addPhotosToMetaData,
   generateMetaData,
   getMetaData,
   isPassordExists,
   makePhotoFavorite,
-  programmableDeleteObject,
-  uploadPassword,
+  programmableDeleteObject, unlock,
+  uploadPassword
 } from "./generateMetaData"
 import s3, { config } from "./s3"
 import * as path from "path"
 import * as fs from "fs"
 import { createHash, matchPassword } from "./utils"
+import { waitWhileLockedThenLock } from './generateMetaData'
+import { Photo } from '../types'
 
 const app = new Koa()
 const router = new Router()
@@ -52,6 +56,8 @@ router.get("/photos", async (ctx) => {
 })
 
 router.post("/upload", async (ctx: any) => {
+  console.info("Start uploading photos")
+  await waitWhileLockedThenLock()
   const files = Object.values(ctx.request.files)
   try {
     const filePromises = files.map((file: any) => {
@@ -60,29 +66,59 @@ router.post("/upload", async (ctx: any) => {
       const fileName =
         path.parse(name).name + "-" + getRandomString() + path.parse(name).ext
       const key = path.join(config.prefix, fileName)
-      const params = {
-        Bucket: config.bucket,
-        Key: key,
-        Body: fileContent,
-        ContentType: type,
-      }
-      return new Promise(function (resolve, reject) {
-        s3.upload(params, function (error: any, data: any) {
-          if (error) {
-            reject(error)
-            return
-          }
-          resolve(data)
-          return
+      return new Promise((resolve) => {
+        console.info("Getting metadata from photo", fileName)
+        exifr
+          .parse(fileContent)
+          .then((exifrMetaData) => {
+            resolve({
+              exif: exifrMetaData,
+              deleted: false,
+              favorite: false,
+            })
+          })
+          .catch((err) => {
+            console.error(err)
+            resolve({
+              exif: {},
+              deleted: false,
+              favorite: false,
+            })
+          })
+      }).then((partialPhotoMetadata: any) => {
+        console.info("Uploading photo to s3", fileName)
+        return new Promise(function (resolve, reject) {
+          s3.upload(
+            {
+              Bucket: config.bucket,
+              Key: key,
+              Body: fileContent,
+              ContentType: type,
+            },
+            function (error: any, data: any) {
+              if (error) {
+                reject(error)
+                return
+              }
+              resolve({
+                ...partialPhotoMetadata,
+                s3Key: data.Key,
+                s3ETag: data.ETag,
+              })
+              return
+            }
+          )
         })
       })
     })
-    const res = await Promise.all(filePromises)
-    const metaData = await generateMetaData()
+    const photos = await Promise.all(filePromises)
+    const metaData = await addPhotosToMetaData(photos as Photo[])
     ctx.body = metaData
   } catch (error) {
     console.error(error)
     ctx.body = error
+  } finally {
+    await unlock()
   }
 })
 
