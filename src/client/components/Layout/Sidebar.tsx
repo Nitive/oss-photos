@@ -28,18 +28,6 @@ const SideBar = () => {
           </li>
           <li className={css.sidebar_item}>
             <Link
-              href="/deleted-photos"
-              className={cn({
-                [css.sidebar_link]: true,
-                [css.sidebar_selected]: location === "/deleted-photos",
-              })}
-            >
-              <Trash fill={"#0076FF"} className={css.sidebar_icon} />
-              Recently&nbsp;deleted
-            </Link>
-          </li>
-          <li className={css.sidebar_item}>
-            <Link
               href="/favorites"
               className={cn({
                 [css.sidebar_link]: true,
@@ -50,6 +38,24 @@ const SideBar = () => {
               Favorites
             </Link>
           </li>
+          <li className={css.sidebar_item}>
+            <Link
+              href="/deleted-photos"
+              className={cn({
+                [css.sidebar_link]: true,
+                [css.sidebar_selected]: location === "/deleted-photos",
+              })}
+            >
+              <Trash fill={"#0076FF"} className={css.sidebar_icon} />
+              Recently&nbsp;deleted
+            </Link>
+          </li>
+          <div
+            className={css.sidebar_title}
+            style={{ marginTop: 24, marginBottom: 12 }}
+          >
+            Settings
+          </div>
           <li className={css.sidebar_item}>
             <Link
               href="/settings"

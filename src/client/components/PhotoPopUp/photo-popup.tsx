@@ -4,7 +4,12 @@ import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
 import { getPreview } from "../../utils"
-import { $metaData, changeOpenedPhoto, getFiltered, setOpenedPhoto } from "../../store"
+import {
+  $metaData,
+  changeOpenedPhoto,
+  getFiltered,
+  setOpenedPhoto,
+} from "../../store"
 
 export const PhotoPopup = () => {
   const metaData = useStore($metaData)

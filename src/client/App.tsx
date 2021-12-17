@@ -4,7 +4,7 @@ import { useContext } from "preact/hooks"
 import { Route, Switch, useLocation } from "wouter-preact"
 import Layout from "./components/Layout"
 import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
-import SettingsPage from "./pages/FavoritesPhotosListPage"
+import FavoritesListPage from "./pages/FavoritesPhotosListPage"
 import PhotosListPage from "./pages/PhotosListPage"
 import Settings from "./pages/Settings"
 import { fetchMetaData, setFilter } from "./store"
@@ -32,10 +32,10 @@ export function App(props: { ctx: AppContext }) {
       (
         {
           "/": "all",
-          "/deleted-photos": "deleted",
           "/favorites": "favorites",
+          "/deleted-photos": "deleted",
         } as const
-      )[path]!
+      )[path] || "all"
     )
   }, [path])
 
@@ -44,7 +44,7 @@ export function App(props: { ctx: AppContext }) {
       <Layout>
         <Switch>
           <Route path="/" component={PhotosListPage} />
-          <Route path="/favorites" component={SettingsPage} />
+          <Route path="/favorites" component={FavoritesListPage} />
           <Route path="/deleted-photos" component={DeletedPhotosListPage} />
           <Route path="/settings" component={Settings} />
           <Route path="/:rest*">
