@@ -247,6 +247,19 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
   }
 }
 
+export function toggleHiddenStatus(meta: MetadataState): MetadataState {
+  console.log("|||||||||||||")
+  return {
+    ...meta,
+    photos: meta.photos.map((photo, i) => {
+      if (meta.selectedPhotos.includes(i)) {
+        return { ...photo, hidden: true }
+      }
+      return photo
+    }),
+  }
+}
+
 const keypressBindings: Bindings = {
   0: createMoveHandlers((i, meta) => i - (i % meta.columns)),
   $: createMoveHandlers((i, meta) => i + meta.columns - (i % meta.columns) - 1),
@@ -279,6 +292,10 @@ const keypressBindings: Bindings = {
   d: {
     normal: deleteSelectedPhotos,
     visual: deleteSelectedPhotos,
+  },
+  q: {
+    normal: toggleHiddenStatus,
+    visual: toggleHiddenStatus,
   },
 }
 

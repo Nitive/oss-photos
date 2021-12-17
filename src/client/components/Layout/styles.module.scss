@@ -120,9 +120,10 @@ $paddingBottom: 20px;
     }
   }
 
-  &_heart {
+  &_lock {
     width: 30px;
     height: 30px;
+    cursor: pointer;
   }
 
   .btn_border {

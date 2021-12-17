@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/preact"
 import HeartIcon from "../../icons/HeartIcon"
+import Lock from "../../icons/Lock"
 import { $metaData, changeGridMode, MetadataState } from "../../store"
 import css from "./styles.module.scss"
 
@@ -33,7 +34,14 @@ const Header = () => {
             )
           })}
         </div>
-        <HeartIcon filled className={css.header_heart} />
+        <div
+          onClick={() => {
+            const password = prompt("Type password")
+            console.log(password, "||||||||||||")
+          }}
+        >
+          <Lock fill={"#0076ff80"} className={css.header_lock} />
+        </div>
       </div>
     </header>
   )

@@ -52,12 +52,18 @@ export function PhotoPreview(props: Props) {
         document.body.classList.add(popupcss.disable_scroll)
       }}
     >
-      <img
-        className={css.photo}
-        src={getPreview(props.photo.s3Key, gridMode)}
-        style={{ objectFit: metaData.gridMode === "small" ? "cover" : "fit" }}
-        alt=""
-      />
+      {props.photo?.hidden ? (
+        <div className={css.protected}>
+          {metaData.gridMode === "small" ? "x" : "Protected photo"}
+        </div>
+      ) : (
+        <img
+          className={css.photo}
+          src={getPreview(props.photo.s3Key, gridMode)}
+          style={{ objectFit: metaData.gridMode === "small" ? "cover" : "fit" }}
+          alt=""
+        />
+      )}
       {metaData.gridMode !== "small" && (
         <button
           onClick={(e) => {

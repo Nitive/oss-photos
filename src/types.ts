@@ -8,6 +8,7 @@ export interface Photo {
   s3ETag: string
   deleted: boolean
   favorite: boolean
+  hidden: boolean
 
   exif?: Partial<{
     Make: string
