@@ -20,7 +20,7 @@ const Settings = () => {
   const [secondPassword, setSecondPassword] = useState("")
   const [oldPassword, setOldPassword] = useState("")
   const [differentPassword, setDifferentPassword] = useState(false)
-  const [passwordExists, setPasswordExists] = useState(false)
+  const [passwordExists, setPasswordExists] = useState(true)
   const [status, setStatus]: any = useState(null)
 
   useEffect(() => {
