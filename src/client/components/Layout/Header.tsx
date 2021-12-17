@@ -1,28 +1,32 @@
 // @ts-ignore
 import * as css from "./styles.module.scss"
 import FillHeartIcon from "../../icons/FillHeartIcon"
-import { useState } from "preact/hooks"
+import { $metaData, changeGridMode, MetadataState } from "../../store"
+import { useStore } from "@nanostores/preact"
 
-const headerButtons = ["Small", "Medium", "Large"]
+const headerButtons = ["small", "medium", "large"] as Array<
+  MetadataState["gridMode"]
+>
 
 const Header = () => {
-  const [photoSize, setPhotoSize] = useState("Small")
+  const { gridMode } = useStore($metaData)
+
   return (
     <header className={css.header}>
       <h1 className={css.header_title}>OSS Photos</h1>
       <div className={css.header_right}>
         <div className={css.header_btns}>
           {headerButtons.map((button) => {
-            const btnClass =
-              photoSize === button
-                ? `${css.header_btn} ${css.btn_border}`
-                : css.header_btn
+            const btnClass = `${css.header_btn} ${
+              gridMode === button ? css.btn_border : ""
+            }`
+
             return (
               <button
                 key={button}
                 className={btnClass}
                 onClick={() => {
-                  setPhotoSize(button)
+                  changeGridMode(button)
                 }}
               >
                 {button}

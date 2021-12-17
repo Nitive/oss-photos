@@ -1,11 +1,12 @@
 import { atom } from "nanostores"
 import { Metadata, Photo } from "../../types"
 
-interface MetadataState extends Metadata {
+export interface MetadataState extends Metadata {
   selectedPhoto: number | undefined
   selectedPhotos: number[]
   mode: Mode
   columns: number
+  gridMode: "small" | "medium" | "large"
 }
 
 export const $metaData = atom<MetadataState>({
@@ -14,9 +15,15 @@ export const $metaData = atom<MetadataState>({
   selectedPhoto: undefined,
   selectedPhotos: [],
   mode: "normal",
-  columns: 25,
+  columns: 10,
+  gridMode: "medium",
 })
 export const $metaDataLoading = atom(true)
+
+export async function changeGridMode(mode: MetadataState["gridMode"]) {
+  const columns = (mode === "large" && 5) || (mode === "medium" && 10) || 25
+  $metaData.set({ ...$metaData.get(), columns, gridMode: mode })
+}
 
 export async function fetchMetaData() {
   $metaDataLoading.set(true)
