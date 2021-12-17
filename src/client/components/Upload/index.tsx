@@ -2,12 +2,22 @@
 import * as css from "./styles.module.scss"
 import { useRef, useState } from "preact/hooks"
 import { setMetaData } from "../../store"
+import cn from "classnames"
+import Img from "../../icons/Img"
 
 export default function Upload() {
   const inputEl = useRef(null as any)
   const [loading, setLoading] = useState(false)
   return (
-    <label className={css.label}>
+    <label
+      className={cn({
+        [css.button]: true,
+        [css.disabled]: loading,
+      })}
+      onClick={(e) => {
+        if (loading) e.preventDefault()
+      }}
+    >
       <input
         className={css.input}
         type="file"
@@ -35,20 +45,8 @@ export default function Upload() {
           }
         }}
       />
-      {loading ? (
-        <span>Uploading...</span>
-      ) : (
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            inputEl.current.click()
-          }}
-          className={css.link}
-        >
-          Upload Photos
-        </a>
-      )}
+      <Img fill={"#0076FF"} className={css.icon} />{" "}
+      {loading ? "Uploading..." : "Upload"}
     </label>
   )
 }

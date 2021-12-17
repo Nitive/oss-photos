@@ -36,7 +36,7 @@ export async function fetchDeletedMetaData() {
 }
 
 export async function setMetaData(metaData: any) {
-  $metaData.set(metaData)
+  $metaData.set({ ...$metaData.get(), ...metaData })
 }
 
 // Vim mode

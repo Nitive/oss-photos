@@ -7,7 +7,7 @@
   "scripts": {
     "start": "parcel src/client/index.html",
     "start-server": "nodemon",
-    "start-imgproxy": "imgproxy",
+    "start-imgproxy": "IMGPROXY_MAX_SRC_RESOLUTION=1000 imgproxy",
     "postinstall": "yarn dlx @yarnpkg/sdks base"
   },
   "nodemonConfig": {
@@ -25,6 +25,7 @@
     "@types/cron": "^1.7.3",
     "aws-sdk": "^2.1046.0",
     "axios": "^0.24.0",
+    "classnames": "^2.3.1",
     "cron": "^1.8.2",
     "dotenv": "^10.0.0",
     "exifr": "^7.1.3",

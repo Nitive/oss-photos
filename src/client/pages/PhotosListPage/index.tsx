@@ -26,7 +26,7 @@ export default function PhotosListPage() {
         <p>Loading...</p>
       ) : (
         <div className={css.list}>
-          {metaData.photos.map((photo, i) => {
+          {metaData.photos.map((photo: any, i: number) => {
             const preview = (
               <PhotoPreview
                 photo={photo}

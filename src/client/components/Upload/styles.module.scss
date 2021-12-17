@@ -1,13 +1,33 @@
 @import "../../styles/vars";
 @import "../../styles/mixins";
 
+.button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 24px;
+  padding: 10px;
+  text-decoration: none;
+  background: #0076ff;
+  border-radius: 12px;
 
-.label {
+  &.disabled {
+    cursor: default;
+    background: #666666;
+  }
+
   .input {
     display: none;
   }
 
-  .link {
-    @include link;
+  .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+
+    path {
+      fill: #fff;
+    }
   }
 }

@@ -24,8 +24,6 @@ export default function DeletedPhotosListPage() {
     fetchDeletedMetaData()
   }, [])
 
-  console.log(metaData)
-
   return (
     <div className={css.page}>
       <h1 className={css.header}>Deleted List</h1>

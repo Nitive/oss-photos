@@ -16,9 +16,32 @@ import * as fs from "fs"
 
 const app = new Koa()
 const router = new Router()
+const MAX_BODY = 5000 * 1024 * 1024 // 5000 MB
+
+function getRandomString(length = 8) {
+  let result = ""
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
 
 app.use(cors())
-app.use(koaBody({ multipart: true }))
+app.use(
+  koaBody({
+    multipart: true,
+    json: true,
+    formLimit: MAX_BODY,
+    textLimit: MAX_BODY,
+    formidable: {
+      maxFileSize: MAX_BODY,
+      maxFieldsSize: MAX_BODY,
+    },
+  })
+)
 
 router.get("/photos", async (ctx) => {
   const metaData = await getMetaData()
@@ -42,7 +65,8 @@ router.post("/upload", async (ctx: any) => {
     const filePromises = files.map((file: any) => {
       const { path: filePath, name, type } = file
       const body = fs.createReadStream(filePath)
-      const key = path.join(config.prefix, name)
+      const fileName = path.parse(name).name + "-" + getRandomString() + path.parse(name).ext
+      const key = path.join(config.prefix, fileName)
       const params = {
         Bucket: config.bucket,
         Key: key,
@@ -55,14 +79,12 @@ router.post("/upload", async (ctx: any) => {
             reject(error)
             return
           }
-          console.log(data)
           resolve(data)
           return
         })
       })
     })
     const res = await Promise.all(filePromises)
-    console.log(123, res)
     const metaData = await generateMetaData()
     ctx.body = metaData
   } catch (error) {
