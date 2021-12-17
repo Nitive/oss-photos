@@ -146,7 +146,7 @@ export const getMetaData = (): Promise<Metadata> => {
 }
 
 export const patchPhotos = async (
-  patches: Pick<Photo, "s3Key" | "deleted" | "favorite">[]
+  overrides: Pick<Photo, "s3Key" | "deleted" | "favorite" | "hidden">[]
 ) => {
   await waitWhileLockedThenLock()
   try {
@@ -154,13 +154,13 @@ export const patchPhotos = async (
     return uploadNewMetaData({
       ...meta,
       photos: meta.photos.map((photo) => {
-        const patch = patches.find((p) => p.s3Key === photo.s3Key)
-        return patch
+        const override = overrides.find((p) => p.s3Key === photo.s3Key)
+        return override
           ? {
               ...photo,
-              favorite: patch.favorite,
-              deleted: patch.deleted,
-              hidden: photo.hidden,
+              favorite: override.favorite,
+              deleted: override.deleted,
+              hidden: override.hidden,
             }
           : photo
       }),
@@ -204,6 +204,7 @@ const getPhotoMetaData = async (s3Key: string, s3ETag: string) => {
               exif: exifrMetaData,
               deleted: false,
               favorite: false,
+              hidden: false,
             })
           })
           .catch((err) => {
@@ -214,6 +215,7 @@ const getPhotoMetaData = async (s3Key: string, s3ETag: string) => {
               exif: {},
               deleted: false,
               favorite: false,
+              hidden: false,
             })
           })
       }

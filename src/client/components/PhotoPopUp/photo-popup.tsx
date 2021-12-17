@@ -4,7 +4,7 @@ import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
 import { getPreview } from "../../utils"
-import { $metaData, changeOpenedPhoto, setOpenedPhoto } from "../../store"
+import { $metaData, changeOpenedPhoto, getFiltered, setOpenedPhoto } from "../../store"
 
 export const PhotoPopup = () => {
   const metaData = useStore($metaData)
@@ -32,11 +32,6 @@ export const PhotoPopup = () => {
       <button
         className={css.arrow_right}
         onClick={() => {
-          // const nextPhoto =
-          //   openPhoto.index === metaData.photos.length - 1
-          //     ? 0
-          //     : openPhoto.index + 1
-          // setOpenPhoto({ index: nextPhoto, show: false })
           changeOpenedPhoto(+1)
         }}
       >
@@ -45,7 +40,7 @@ export const PhotoPopup = () => {
       <img
         className={css.open_photo}
         src={getPreview(
-          metaData.photos[metaData.openedPhoto!].s3Key,
+          getFiltered(metaData)[metaData.openedPhoto!].s3Key,
           metaData.gridMode
         )}
         alt=""

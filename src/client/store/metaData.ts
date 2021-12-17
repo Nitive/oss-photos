@@ -261,13 +261,17 @@ export function toggleFavoritesStatus(meta: MetadataState): MetadataState {
   // If there are at least one not favorite, add it to favorites
   // otherwise remove all selected from favorites
   const shouldAddToFavorites = !meta.selectedPhotos.every(
-    (i) => meta.photos[i].favorite
+    (i) => getFiltered(meta)?.[i]?.favorite
   )
 
   return {
     ...meta,
     photos: meta.photos.map((photo, i) => {
-      if (meta.selectedPhotos.some((i) => getFiltered(meta)[i] === photo)) {
+      if (
+        meta.selectedPhotos.some(
+          (i) => getFiltered(meta)[i].s3Key === photo.s3Key
+        )
+      ) {
         return { ...photo, favorite: shouldAddToFavorites }
       }
       return photo
@@ -293,9 +297,12 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
 export function toggleHiddenStatus(meta: MetadataState): MetadataState {
   return {
     ...meta,
-    photos: meta.photos.map((photo, i) => {
-      if (meta.selectedPhotos.includes(i)) {
-        console.log("|||||||||||||")
+    photos: meta.photos.map((photo) => {
+      if (
+        meta.selectedPhotos.some(
+          (i) => getFiltered(meta)[i].s3Key === photo.s3Key
+        )
+      ) {
         return { ...photo, hidden: true }
       }
       return photo
