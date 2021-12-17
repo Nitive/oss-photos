@@ -144,7 +144,7 @@ router.post("/password/change", async (ctx) => {
   const data = (ctx.request as any).body
   const { oldPassword, newPassword } = JSON.parse(data)
   const isRigthPassword = await matchPassword(oldPassword)
-  console.log(isRigthPassword, "isRigthPasswordisRigthPasswordisRigthPassword")
+
   if (isRigthPassword) {
     try {
       const hash = createHash(newPassword)
@@ -154,7 +154,7 @@ router.post("/password/change", async (ctx) => {
       ctx.body = { success: false, error: e }
     }
   } else {
-    ctx.body = { success: false, error: "Old password is incorrect" }
+    ctx.body = { success: false, message: "Old password is incorrect" }
   }
 })
 

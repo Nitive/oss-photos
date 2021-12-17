@@ -45,9 +45,7 @@ $paddingBottom: 20px;
     }
 
     &_item {
-      &:not(:first-child) {
-        margin-top: 10px;
-      }
+      margin-bottom: 10px;
     }
 
     &_link {
