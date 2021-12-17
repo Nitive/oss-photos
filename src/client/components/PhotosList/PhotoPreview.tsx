@@ -47,22 +47,14 @@ export function PhotoPreview(props: Props) {
         document.body.classList.add(popupcss.disable_scroll)
       }}
     >
-      <img
-        className={css.photo}
-        src={
-          Math.random() > 0.5
-            ? "https://via.placeholder.com/1900x1080"
-            : "https://via.placeholder.com/1080x1900"
-        }
-        alt=""
-      />
+      <img className={css.photo} src={getPreview(props.photo.s3Key)} alt="" />
       <button
         onClick={() => makePhotoFavorite(props.photo.s3Key)}
         className={css.favoriteIcon}
       >
         <HeartIcon />
       </button>
-      {/*<button getPreview(props.photo.s3Key)
+      {/*<button
         style={{ position: "absolute" }}
         onClick={(event) => {
           event.stopPropagation()
