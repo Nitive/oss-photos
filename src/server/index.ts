@@ -11,15 +11,17 @@ import {
   getMetaData,
   isPassordExists,
   makePhotoFavorite,
-  programmableDeleteObject, unlock,
-  uploadPassword
+  programmableDeleteObject,
+  unlock,
+  uploadPassword,
 } from "./generateMetaData"
 import s3, { config } from "./s3"
 import * as path from "path"
 import * as fs from "fs"
 import { createHash, matchPassword } from "./utils"
-import { waitWhileLockedThenLock } from './generateMetaData'
-import { Photo } from '../types'
+import { waitWhileLockedThenLock } from "./generateMetaData"
+import { Photo } from "../types"
+import { decrypt, encrypt } from "./crypt"
 
 const app = new Koa()
 const router = new Router()
@@ -92,8 +94,15 @@ router.post("/upload", async (ctx: any) => {
             {
               Bucket: config.bucket,
               Key: key,
-              Body: fileContent,
+              Body:
+                process.env.ENABLE_ENCRYPTION === "true"
+                  ? encrypt(fileContent)
+                  : fileContent,
               ContentType: type,
+              Metadata: {
+                encrypted:
+                  process.env.ENABLE_ENCRYPTION === "true" ? "true" : "false",
+              },
             },
             function (error: any, data: any) {
               if (error) {
@@ -102,6 +111,7 @@ router.post("/upload", async (ctx: any) => {
               }
               resolve({
                 ...partialPhotoMetadata,
+                encrypted: process.env.ENABLE_ENCRYPTION === "true",
                 s3Key: data.Key,
                 s3ETag: data.ETag,
               })
@@ -158,7 +168,10 @@ router.get("/photo", async (ctx) => {
       }
     )
   })
-  ctx.body = data.Body
+  ctx.body =
+    data.Metadata?.encrypted === "true"
+      ? decrypt(data.Body as Buffer)
+      : data.Body
   ctx.header.etag = data.ETag
   ctx.header["cache-control"] = "Cache-Control: max-age=31557600, public"
   ctx.status = 200
