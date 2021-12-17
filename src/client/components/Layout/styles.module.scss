@@ -6,13 +6,21 @@ $paddingBottom: 80px;
 
 .layout {
   min-height: 100%;
-  display: flex;
-  flex-flow: row nowrap;
+  //display: flex;
+  //flex-flow: row nowrap;
   justify-content: stretch;
+  padding-top: 91px;
+  box-sizing: border-box;
+  padding-left: 320px;
 
   .sidebar {
-    flex: 0 0 200px;
-    padding: 24px 40px $paddingBottom 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: 115px 40px $paddingBottom 20px;
     border-right: 1px solid $grayLight;
 
     &_title {
@@ -52,7 +60,6 @@ $paddingBottom: 80px;
   }
 
   .content {
-    flex: 1 1 100%;
   }
 }
 
@@ -62,6 +69,13 @@ $paddingBottom: 80px;
   padding: 24px;
   color: #ffffff;
   background-color: #141414;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+  height: 91px;
 
   &_title {
     font-size: 36px;
