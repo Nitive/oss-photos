@@ -1,22 +1,49 @@
 // @ts-ignore
 import * as css from "./styles.module.scss"
-import { useState } from "preact/hooks"
+import { useEffect, useState } from "preact/hooks"
 
-const setPassowrd = async (password: string) => {
-  const response = await fetch("http://localhost:3000/password", {
+const setPassoword = async (password: string) => {
+  await fetch("http://localhost:3000/password", {
     method: "POST",
     body: JSON.stringify({ password }),
+  })
+}
+
+const changePassoword = async (newPassword: string, oldPassword: string) => {
+  await fetch("http://localhost:3000/password/change", {
+    method: "POST",
+    body: JSON.stringify({ newPassword, oldPassword }),
   })
 }
 
 const Settings = () => {
   const [fistPassword, setFistPassword] = useState("")
   const [secondPassword, setSecondPassword] = useState("")
+  const [oldPassword, setOldPassword] = useState("")
   const [differentPassword, setDifferentPassword] = useState(false)
+  const [passwordExists, setPasswordExists] = useState(false)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const fetchPassword = async () =>
+      await fetch("http://localhost:3000/password")
+        .then((res) => res.json())
+        .then(({ status, isPassordExists }) => {
+          if (status === "OK") {
+            setPasswordExists(isPassordExists)
+          }
+        })
+        .catch(console.error)
+    fetchPassword()
+  }, [])
 
   return (
     <div className={css.settings}>
-      <h1 className={css.settings_title}>Password for protected photos</h1>
+      <h1 className={css.settings_title}>
+        {passwordExists
+          ? "Change password for protected photos"
+          : "Create password for protected photos"}
+      </h1>
       <form
         className={css.settings_form}
         onSubmit={(e: any) => {
@@ -25,17 +52,30 @@ const Settings = () => {
           if (!identicalPasswords) {
             setDifferentPassword(true)
           } else {
-            console.log(secondPassword, "sdsfsdfdsf")
-            setPassowrd(secondPassword)
+            passwordExists
+              ? changePassoword(secondPassword, oldPassword)
+              : setPassoword(secondPassword)
           }
         }}
       >
+        {passwordExists && (
+          <input
+            value={oldPassword}
+            type="password"
+            required
+            className={css.settings_input}
+            placeholder="type old password"
+            onChange={(e: any) => {
+              setOldPassword(e.target.value)
+            }}
+          ></input>
+        )}
         <input
           value={fistPassword}
           type="password"
           required
           className={css.settings_input}
-          placeholder="password"
+          placeholder="new password"
           onChange={(e: any) => {
             setFistPassword(e.target.value)
             setDifferentPassword(false)
@@ -46,7 +86,7 @@ const Settings = () => {
           type="password"
           required
           className={css.settings_input}
-          placeholder="confirm password"
+          placeholder="confirm new password"
           onChange={(e: any) => {
             setSecondPassword(e.target.value)
             setDifferentPassword(false)

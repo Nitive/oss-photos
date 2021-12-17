@@ -7,6 +7,7 @@ import * as Router from "koa-router"
 import {
   generateMetaData,
   getMetaData,
+  isPassordExists,
   makePhotoFavorite,
   programmableDeleteObject,
   uploadPassword,
@@ -14,7 +15,7 @@ import {
 import s3, { config } from "./s3"
 import * as path from "path"
 import * as fs from "fs"
-import * as crypto from "crypto"
+import { createHash, matchPassword } from "./utils"
 
 const app = new Koa()
 const router = new Router()
@@ -130,12 +131,39 @@ router.get("/photo", async (ctx) => {
 router.post("/password", async (ctx) => {
   const data = (ctx.request as any).body
   const { password } = JSON.parse(data)
-  const hash = crypto.createHash("sha256").update(password).digest("hex")
+  const hash = createHash(password)
   try {
     await uploadPassword(hash)
     ctx.body = { success: true }
   } catch (e) {
     ctx.body = { success: false, error: e }
+  }
+})
+
+router.post("/password/change", async (ctx) => {
+  const data = (ctx.request as any).body
+  const { oldPassword, newPassword } = JSON.parse(data)
+  const isRigthPassword = await matchPassword(oldPassword)
+  console.log(isRigthPassword, "isRigthPasswordisRigthPasswordisRigthPassword")
+  if (isRigthPassword) {
+    try {
+      const hash = createHash(newPassword)
+      await uploadPassword(hash)
+      ctx.body = { success: true }
+    } catch (e) {
+      ctx.body = { success: false, error: e }
+    }
+  } else {
+    ctx.body = { success: false, error: "Old password is incorrect" }
+  }
+})
+
+router.get("/password", async (ctx) => {
+  const passordExists = await isPassordExists()
+
+  ctx.body = {
+    status: "OK",
+    ...passordExists,
   }
 })
 

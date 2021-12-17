@@ -29,7 +29,7 @@ const unlock = () => {
       },
       function (err, data) {
         if (err) return reject(err)
-        console.info('Lock file removed')
+        console.info("Lock file removed")
         resolve(data)
       }
     )
@@ -70,19 +70,22 @@ const waitWhileLockedThenLock = async () => {
   }
   console.info("Trying to create lock file")
   const lockFileCreated = await new Promise((resolve, reject) => {
-    s3.upload({
-      Bucket: process.env.S3_BUCKET as string,
-      Key: lockFileKey,
-      Body: '',
-      ContentType: "application/json",
-    }, (err: unknown, data: any) => {
-      if (err) {
-        console.error(err)
-        resolve(false)
-        return
+    s3.upload(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: lockFileKey,
+        Body: "",
+        ContentType: "application/json",
+      },
+      (err: unknown, data: any) => {
+        if (err) {
+          console.error(err)
+          resolve(false)
+          return
+        }
+        resolve(true)
       }
-      resolve(true)
-    })
+    )
   })
   if (lockFileCreated) {
     console.info("Lock file created")
@@ -260,6 +263,24 @@ function sortPhotos(photos: Photo[]): Photo[] {
   })
 }
 
+export const generateMetaData = async () => {
+  // await deleteMetaData()
+  console.info("Start generating meta data")
+  console.info("Getting current meta data")
+  const currentMetaData = await getMetaData()
+  console.info("Getting current objects")
+  const objects = await getAllObjects()
+  console.info("Generating new meta data")
+  const newMetaData = await getNewMetaData(currentMetaData, objects)
+  console.info("Uploading new meta data")
+  await uploadNewMetaData({
+    ...newMetaData,
+    photos: sortPhotos(newMetaData.photos),
+  })
+  console.info("Finish generating meta data")
+  return newMetaData
+}
+
 const passwordHashKey = path.join(
   process.env.S3_PREFIX as string,
   "oss-photo",
@@ -281,22 +302,35 @@ export const uploadPassword = async (passwordHash: string) => {
   })
 }
 
-export const generateMetaData = async () => {
-  // await deleteMetaData()
-  console.info("Start generating meta data")
-  await waitWhileLockedThenLock()
-  console.info("Getting current meta data")
-  const currentMetaData = await getMetaData()
-  console.info("Getting current objects")
-  const objects = await getAllObjects()
-  console.info("Generating new meta data")
-  const newMetaData = await getNewMetaData(currentMetaData, objects)
-  console.info("Uploading new meta data")
-  await uploadNewMetaData({
-    ...newMetaData,
-    photos: sortPhotos(newMetaData.photos),
+export const isPassordExists = (): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    s3.getObject(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: passwordHashKey,
+      },
+      function (err) {
+        if (err?.code === "NoSuchKey")
+          return resolve({ isPassordExists: false })
+        if (err) return reject(err)
+        resolve({ isPassordExists: true })
+      }
+    )
   })
-  console.info("Finish generating meta data")
-  await unlock()
-  return newMetaData
+}
+
+export const getPasswordHash = (): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    s3.getObject(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: passwordHashKey,
+      },
+      function (err, data) {
+        if (err?.code === "NoSuchKey") return resolve({ passwordHash: null })
+        if (err) return reject(err)
+        resolve({ passwordHash: data?.Body?.toString() })
+      }
+    )
+  })
 }
