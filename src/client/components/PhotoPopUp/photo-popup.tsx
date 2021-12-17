@@ -4,9 +4,9 @@ import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
 import { getPreview } from "../../utils"
-import { $metaData } from "../../store"
+import { $metaData, changeOpenedPhoto, setOpenedPhoto } from "../../store"
 
-export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
+export const PhotoPopup = () => {
   const metaData = useStore($metaData)
 
   return (
@@ -14,7 +14,7 @@ export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
       <button
         className={css.popup_close}
         onClick={() => {
-          setOpenPhoto(null)
+          setOpenedPhoto(undefined)
           document.body.classList.remove(css.disable_scroll)
           document.body.style.paddingRight = "0px"
         }}
@@ -24,11 +24,7 @@ export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
       <button
         className={css.arrow_left}
         onClick={() => {
-          const nextPhoto =
-            openPhoto.index === 0
-              ? metaData.photos.length - 1
-              : openPhoto.index - 1
-          setOpenPhoto({ index: nextPhoto, show: false })
+          changeOpenedPhoto(-1)
         }}
       >
         <ArrowLeft />
@@ -36,23 +32,22 @@ export const PhotoPopup = ({ openPhoto, setOpenPhoto }: any) => {
       <button
         className={css.arrow_right}
         onClick={() => {
-          const nextPhoto =
-            openPhoto.index === metaData.photos.length - 1
-              ? 0
-              : openPhoto.index + 1
-          setOpenPhoto({ index: nextPhoto, show: false })
+          // const nextPhoto =
+          //   openPhoto.index === metaData.photos.length - 1
+          //     ? 0
+          //     : openPhoto.index + 1
+          // setOpenPhoto({ index: nextPhoto, show: false })
+          changeOpenedPhoto(+1)
         }}
       >
         <ArrowRight />
       </button>
       <img
         className={css.open_photo}
-        style={{ opacity: openPhoto.show ? 1 : 0 }}
         src={getPreview(
-          metaData.photos[openPhoto.index].s3Key,
+          metaData.photos[metaData.openedPhoto!].s3Key,
           metaData.gridMode
         )}
-        onLoad={() => setOpenPhoto({ index: openPhoto.index, show: true })}
         alt=""
       />
     </div>

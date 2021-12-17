@@ -4,18 +4,35 @@ import { getPreview } from "../utils"
 
 export type Mode = "normal" | "visual"
 export type GridMode = "small" | "medium" | "large"
+export type Filter = "all" | "favorites" | "deleted"
+
+const filters: { [key in Filter]: (p: Photo) => boolean } = {
+  all(photo) {
+    return !photo.deleted
+  },
+  favorites(photo) {
+    return photo.favorite
+  },
+  deleted(photo) {
+    return photo.deleted
+  },
+}
 
 export interface MetadataState extends Metadata {
   selectedPhoto: number | undefined
   selectedPhotos: number[]
+  openedPhoto: number | undefined
   mode: Mode
   columns: number
   gridMode: "small" | "medium" | "large"
+  filter: Filter
 }
 
 export const $metaData = atom<MetadataState>({
   generatedAt: "",
   photos: [],
+  openedPhoto: undefined,
+  filter: "all",
   selectedPhoto: undefined,
   selectedPhotos: [],
   mode: "normal",
@@ -77,6 +94,23 @@ export function setFavoritesForPhoto(s3Key: string, favorite: boolean) {
   })
 }
 
+export function setOpenedPhoto(i: number | undefined) {
+  const prevState = $metaData.get()
+  $metaData.set({
+    ...prevState,
+    openedPhoto: i,
+  })
+}
+
+export function changeOpenedPhoto(change: number) {
+  const prevState = $metaData.get()
+  if (!prevState.openedPhoto) return
+  $metaData.set({
+    ...prevState,
+    openedPhoto: prevState.openedPhoto + change,
+  })
+}
+
 // Subscriptions
 
 function isChanged(a: Photo, b: Photo) {
@@ -134,19 +168,23 @@ function findAnotherEdge(meta: MetadataState): number {
   return meta.selectedPhotos[0]
 }
 
+export function getFiltered(meta: MetadataState): Photo[] {
+  return meta.photos.filter(filters[meta.filter])
+}
+
 function createMoveHandlers(
   getNewIndex: (i: number, meta: MetadataState) => number
 ): Binding {
   function getNewSelected(meta: MetadataState): number {
     return Math.min(
-      meta.photos.length - 1,
+      getFiltered(meta).length - 1,
       getNewIndex(meta.selectedPhoto!, meta)
     )
   }
 
   return {
     normal(meta) {
-      if (meta.photos.length === 0) {
+      if (getFiltered(meta).length === 0) {
         return { ...meta, selectedPhotos: [], selectedPhoto: undefined }
       }
 
@@ -162,7 +200,7 @@ function createMoveHandlers(
       return { ...meta, selectedPhotos: [0], selectedPhoto: 0 }
     },
     visual(meta) {
-      if (meta.photos.length === 0) {
+      if (getFiltered(meta).length === 0) {
         return { ...meta, selectedPhotos: [], selectedPhoto: undefined }
       }
 
@@ -224,7 +262,7 @@ export function toggleFavoritesStatus(meta: MetadataState): MetadataState {
   return {
     ...meta,
     photos: meta.photos.map((photo, i) => {
-      if (meta.selectedPhotos.includes(i)) {
+      if (meta.selectedPhotos.some((i) => getFiltered(meta)[i] === photo)) {
         return { ...photo, favorite: shouldAddToFavorites }
       }
       return photo
@@ -236,8 +274,8 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
   if (meta.selectedPhoto === undefined) return meta
   return {
     ...meta,
-    photos: meta.photos.map((photo, i) => {
-      if (meta.selectedPhotos.includes(i)) {
+    photos: meta.photos.map((photo) => {
+      if (meta.selectedPhotos.some((i) => getFiltered(meta)[i] === photo)) {
         return { ...photo, deleted: true }
       }
       return photo
@@ -307,6 +345,14 @@ const keydownBindings: Bindings = {
   Escape: {
     visual: toNormalMode,
   },
+  Enter: {
+    normal(meta) {
+      return {
+        ...meta,
+        openedPhoto: meta.selectedPhoto,
+      }
+    },
+  },
 }
 
 const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
@@ -315,7 +361,7 @@ const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
   const newState = bindings[e.key]?.[prevState.mode]?.(prevState)
   if (newState) $metaData.set(newState)
   if (newState?.selectedPhoto) {
-    const photo = newState.photos[newState.selectedPhoto]
+    const photo = getFiltered(newState)[newState.selectedPhoto]
     const photoElement = document.querySelector(
       `[src="${getPreview(photo.s3Key, newState.gridMode)}"]`
     )

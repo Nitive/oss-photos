@@ -8,6 +8,7 @@ import {
   addPhotoToSelection,
   selectPhoto,
   setFavoritesForPhoto,
+  setOpenedPhoto,
 } from "../../store"
 import { getPreview } from "../../utils"
 import css from "./styles.module.scss"
@@ -15,7 +16,6 @@ import css from "./styles.module.scss"
 interface Props {
   photo: Photo
   index: number
-  setOpenPhoto(opts: { index: number; show: boolean }): void
 }
 
 export function PhotoPreview(props: Props) {
@@ -45,7 +45,7 @@ export function PhotoPreview(props: Props) {
         }
       }}
       onDblClick={() => {
-        props.setOpenPhoto({ index: props.index, show: false })
+        setOpenedPhoto(props.index)
         const paddingOffset =
           window.innerWidth - document.body.offsetWidth + "px"
         document.body.style.paddingRight = paddingOffset
