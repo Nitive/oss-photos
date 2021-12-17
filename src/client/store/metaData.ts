@@ -294,6 +294,21 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
   }
 }
 
+export function restoreSelectedPhotos(meta: MetadataState): MetadataState {
+  if (meta.selectedPhoto === undefined) return meta
+  return {
+    ...meta,
+    photos: meta.photos.map((photo) => {
+      if (meta.selectedPhotos.some((i) => getFiltered(meta)[i] === photo)) {
+        return { ...photo, deleted: false }
+      }
+      return photo
+    }),
+    selectedPhotos: [meta.selectedPhotos[0]],
+    mode: "normal",
+  }
+}
+
 export function toggleHiddenStatus(meta: MetadataState): MetadataState {
   return {
     ...meta,
@@ -342,6 +357,10 @@ const keypressBindings: Bindings = {
   d: {
     normal: deleteSelectedPhotos,
     visual: deleteSelectedPhotos,
+  },
+  r: {
+    normal: restoreSelectedPhotos,
+    visual: restoreSelectedPhotos,
   },
   q: {
     normal: toggleHiddenStatus,
