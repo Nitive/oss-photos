@@ -4,6 +4,7 @@
 .list {
   display: flex;
   flex-flow: row wrap;
+  user-select: none;
 
   .item {
     width: 50px;
