@@ -9,9 +9,87 @@ const metaDataKey = path.join(
   "metadata.json"
 )
 
+const lockFileKey = path.join(
+  process.env.S3_PREFIX as string,
+  "oss-photo",
+  ".lock"
+)
+
 const initialMetaData = {
   generatedAt: new Date().toISOString(),
   photos: [],
+}
+
+const unlock = () => {
+  return new Promise((resolve, reject) => {
+    s3.deleteObject(
+      {
+        Bucket: process.env.S3_BUCKET as string,
+        Key: lockFileKey,
+      },
+      function (err, data) {
+        if (err) return reject(err)
+        console.info('Lock file removed')
+        resolve(data)
+      }
+    )
+  })
+}
+
+const waitWhileLockedThenLock = async () => {
+  console.info("Start waiting for lock key disappearing")
+  let lockFileExists = true
+  while (lockFileExists) {
+    lockFileExists = await new Promise<boolean>((resolve) => {
+      s3.getObject(
+        {
+          Bucket: process.env.S3_BUCKET as string,
+          Key: lockFileKey,
+        },
+        function (err: any, data: any) {
+          if (err?.code === "NoSuchKey") {
+            console.info("Lock key disappeared")
+            resolve(false)
+          } else if (err) {
+            console.error(err)
+            resolve(true)
+          } else {
+            resolve(true)
+          }
+        }
+      )
+    })
+    if (lockFileExists) {
+      await new Promise((resolve) => {
+        console.info("Continue waiting for lock key disappearing")
+        setTimeout(() => {
+          resolve(true)
+        }, 1000)
+      })
+    }
+  }
+  console.info("Trying to create lock file")
+  const lockFileCreated = await new Promise((resolve, reject) => {
+    s3.upload({
+      Bucket: process.env.S3_BUCKET as string,
+      Key: lockFileKey,
+      Body: '',
+      ContentType: "application/json",
+    }, (err: unknown, data: any) => {
+      if (err) {
+        console.error(err)
+        resolve(false)
+        return
+      }
+      resolve(true)
+    })
+  })
+  if (lockFileCreated) {
+    console.info("Lock file created")
+  } else {
+    console.info("Lock file was not created, lets start from the beginning")
+    return waitWhileLockedThenLock()
+  }
 }
 
 const getAllObjects = async () => {
@@ -206,6 +284,7 @@ export const uploadPassword = async (passwordHash: string) => {
 export const generateMetaData = async () => {
   // await deleteMetaData()
   console.info("Start generating meta data")
+  await waitWhileLockedThenLock()
   console.info("Getting current meta data")
   const currentMetaData = await getMetaData()
   console.info("Getting current objects")
@@ -218,5 +297,6 @@ export const generateMetaData = async () => {
     photos: sortPhotos(newMetaData.photos),
   })
   console.info("Finish generating meta data")
+  await unlock()
   return newMetaData
 }

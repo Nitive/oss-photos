@@ -55,14 +55,14 @@ router.post("/upload", async (ctx: any) => {
   try {
     const filePromises = files.map((file: any) => {
       const { path: filePath, name, type } = file
-      const body = fs.createReadStream(filePath)
+      const fileContent = fs.readFileSync(filePath)
       const fileName =
         path.parse(name).name + "-" + getRandomString() + path.parse(name).ext
       const key = path.join(config.prefix, fileName)
       const params = {
         Bucket: config.bucket,
         Key: key,
-        Body: body,
+        Body: fileContent,
         ContentType: type,
       }
       return new Promise(function (resolve, reject) {
