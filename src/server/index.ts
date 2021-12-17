@@ -133,7 +133,7 @@ router.post("/upload", async (ctx: any) => {
 })
 
 router.patch("/photos/batch", async (ctx) => {
-  const { photos } = ctx.request.query as any
+  const { photos } = JSON.parse(ctx.request.body as any)
   assert.ok(Array.isArray(photos), "photos must be an array")
 
   await patchPhotos(photos)

@@ -24,6 +24,8 @@ export const $metaData = atom<MetadataState>({
 })
 export const $metaDataLoading = atom(true)
 
+let savedMeta = $metaData.get()
+
 export async function changeGridMode(mode: MetadataState["gridMode"]) {
   const columns = (mode === "large" && 5) || (mode === "medium" && 10) || 25
   $metaData.set({ ...$metaData.get(), columns, gridMode: mode })
@@ -33,12 +35,16 @@ export async function fetchMetaData() {
   $metaDataLoading.set(true)
   const res = await fetch("http://localhost:3000/photos")
   const metaData = await res.json()
-  $metaData.set({ ...$metaData.get(), ...metaData })
+  const newState = { ...$metaData.get(), ...metaData }
+  savedMeta = newState
+  $metaData.set(newState)
   $metaDataLoading.set(false)
 }
 
 export function setMetaData(metaData: Metadata) {
-  $metaData.set({ ...$metaData.get(), ...metaData })
+  const newState = { ...$metaData.get(), ...metaData }
+  savedMeta = newState
+  $metaData.set(newState)
 }
 
 export function selectPhoto(index: number) {
@@ -78,13 +84,13 @@ function isChanged(a: Photo, b: Photo) {
   return a.favorite !== b.favorite || a.deleted !== b.deleted
 }
 
-let savedMeta = $metaData.get()
 $metaData.subscribe((meta) => {
   const changed = meta.photos.filter((p, i) =>
     isChanged(p, savedMeta.photos[i])
   )
 
   if (changed.length > 0) {
+    console.log("Sync", changed)
     patchMetaData({
       photos: changed.map((p) => ({
         s3Key: p.s3Key,
