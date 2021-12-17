@@ -2,7 +2,7 @@ import * as crypto from "crypto"
 const algorithm = "aes-256-ctr"
 const key = crypto
   .createHash("sha256")
-  .update(String(process.env.SECRET_KEY))
+  .update(String(process.env.ENCRYPTION_SECRET))
   .digest("base64")
   .substr(0, 32)
 
