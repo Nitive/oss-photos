@@ -54,7 +54,7 @@ export const waitWhileLockedThenLock = async () => {
             console.error(err)
             resolve(true)
           } else {
-            console.log('Lock file exists')
+            console.log("Lock file exists")
             resolve(true)
           }
         }
@@ -156,7 +156,12 @@ export const patchPhotos = async (
       photos: meta.photos.map((photo) => {
         const patch = patches.find((p) => p.s3Key === photo.s3Key)
         return patch
-          ? { ...photo, favorite: patch.favorite, deleted: patch.deleted }
+          ? {
+              ...photo,
+              favorite: patch.favorite,
+              deleted: patch.deleted,
+              hidden: photo.hidden,
+            }
           : photo
       }),
     })
@@ -268,7 +273,6 @@ function sortPhotos(photos: Photo[]): Photo[] {
     )
   })
 }
-
 
 export const addPhotosToMetaData = async (photos: Photo[]) => {
   console.info("Start adding photos to meta data")

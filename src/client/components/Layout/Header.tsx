@@ -1,5 +1,4 @@
 import { useStore } from "@nanostores/preact"
-import HeartIcon from "../../icons/HeartIcon"
 import Lock from "../../icons/Lock"
 import { $metaData, changeGridMode, MetadataState } from "../../store"
 import css from "./styles.module.scss"
@@ -7,6 +6,13 @@ import css from "./styles.module.scss"
 const headerButtons = ["small", "medium", "large"] as Array<
   MetadataState["gridMode"]
 >
+
+const unlockPhoto = async (password: string) => {
+  const res = await fetch("http://localhost:3000/unlock-photo", {
+    method: "POST",
+    body: JSON.stringify({ password }),
+  })
+}
 
 const Header = () => {
   const { gridMode } = useStore($metaData)
@@ -37,7 +43,11 @@ const Header = () => {
         <div
           onClick={() => {
             const password = prompt("Type password")
-            console.log(password, "||||||||||||")
+            if (!password?.trim()) {
+              alert("Password cannot be empty")
+            } else {
+              unlockPhoto(password.trim())
+            }
           }}
         >
           <Lock fill={"#0076ff80"} className={css.header_lock} />

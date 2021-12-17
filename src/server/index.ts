@@ -11,14 +11,14 @@ import * as path from "path"
 import { Photo } from "../types"
 import { decrypt, encrypt } from "./crypt"
 import {
-    addPhotosToMetaData,
-    generateMetaData,
-    getMetaData,
-    isPassordExists,
-    patchPhotos,
-    unlock,
-    uploadPassword,
-    waitWhileLockedThenLock
+  addPhotosToMetaData,
+  generateMetaData,
+  getMetaData,
+  isPassordExists,
+  patchPhotos,
+  unlock,
+  uploadPassword,
+  waitWhileLockedThenLock,
 } from "./generateMetaData"
 import s3, { config } from "./s3"
 import { createHash, matchPassword } from "./utils"
@@ -206,6 +206,18 @@ router.get("/password", async (ctx) => {
   ctx.body = {
     status: "OK",
     ...passordExists,
+  }
+})
+
+router.post("/unlock-photo", async (ctx) => {
+  const data = (ctx.request as any).body
+  const { password } = JSON.parse(data)
+  const isRigthPassword = await matchPassword(password)
+
+  if (isRigthPassword) {
+    ctx.body = { success: true }
+  } else {
+    ctx.body = { success: false, message: "The password is incorrect" }
   }
 })
 

@@ -115,7 +115,11 @@ export function changeOpenedPhoto(change: number) {
 
 function isChanged(a: Photo, b: Photo) {
   if (!a || !b) return false
-  return a.favorite !== b.favorite || a.deleted !== b.deleted
+  return (
+    a.favorite !== b.favorite ||
+    a.deleted !== b.deleted ||
+    a.hidden !== b.hidden
+  )
 }
 
 $metaData.subscribe((meta) => {
@@ -130,6 +134,7 @@ $metaData.subscribe((meta) => {
         s3Key: p.s3Key,
         favorite: p.favorite,
         deleted: p.deleted,
+        hidden: p.hidden,
       })),
     })
       .then((data) => {
@@ -286,11 +291,11 @@ export function deleteSelectedPhotos(meta: MetadataState): MetadataState {
 }
 
 export function toggleHiddenStatus(meta: MetadataState): MetadataState {
-  console.log("|||||||||||||")
   return {
     ...meta,
     photos: meta.photos.map((photo, i) => {
       if (meta.selectedPhotos.includes(i)) {
+        console.log("|||||||||||||")
         return { ...photo, hidden: true }
       }
       return photo
