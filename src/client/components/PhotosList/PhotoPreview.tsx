@@ -4,7 +4,7 @@ import { Photo } from "../../../types"
 // @ts-ignore
 import * as popupcss from "../../components/PhotoPopUp/styles.module.scss"
 import HeartIcon from "../../icons/HeartIcon"
-import { $metaData, selectPhoto } from "../../store"
+import { $metaData, addPhotoToSelection, selectPhoto } from "../../store"
 import { getPreview, makePhotoFavorite } from "../../utils"
 // @ts-ignore
 import * as css from "./styles.module.scss"
@@ -24,7 +24,11 @@ export function PhotoPreview(props: Props) {
         [css.selectedPhoto]: metaData.selectedPhotos.includes(props.index),
       })}
       onClick={(e) => {
-        selectPhoto(props.index)
+        if (e.shiftKey) {
+          addPhotoToSelection(props.index)
+        } else {
+          selectPhoto(props.index)
+        }
       }}
       onDblClick={(e) => {
         props.setOpenPhoto({ index: props.index, show: false })

@@ -31,10 +31,21 @@ export async function setMetaData(metaData: Metadata) {
 }
 
 export async function selectPhoto(index: number) {
+  const prevState = $metaData.get()
   $metaData.set({
-    ...$metaData.get(),
+    ...prevState,
     selectedPhoto: index,
     selectedPhotos: [index],
+  })
+}
+
+export async function addPhotoToSelection(index: number) {
+  const prevState = $metaData.get()
+  $metaData.set({
+    ...prevState,
+    selectedPhoto: index,
+    selectedPhotos: [...prevState.selectedPhotos, index].sort(),
+    mode: "visual",
   })
 }
 
