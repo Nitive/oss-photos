@@ -42,6 +42,7 @@ export default function PhotosListPage() {
           })}
         </div>
       )}
+
       {openPhoto && (
         <PhotoPopup openPhoto={openPhoto} setOpenPhoto={setOpenPhoto} />
       )}

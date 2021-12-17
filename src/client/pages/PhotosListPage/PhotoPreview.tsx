@@ -27,7 +27,7 @@ export function PhotoPreview(props: Props) {
     >
       <img className={css.photo} src={getPreview(props.photo.s3Key)} alt="" />
       <button
-        onClick={() => makePhotoFavorite(1, [])}
+        onClick={() => makePhotoFavorite(props.photo.s3Key)}
         className={css.favoriteIcon}
       >
         <HeartIcon />

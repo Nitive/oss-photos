@@ -4,13 +4,9 @@ export function getPreview(s3Key: string) {
   )}`
 }
 
-export const makePhotoFavorite = async (
-  id: number,
-  currentLabels: Array<string>
-) => {
-  await fetch(`http://localhost:3000/photos/${id}/label`, {
-    method: "PATCH",
-    body: JSON.stringify({ labels: [...currentLabels, "favorite"] }),
+export const makePhotoFavorite = async (id: string) => {
+  await fetch(`http://localhost:3000/photos/${id}/favorite`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json;utf-8",
     },

@@ -7,6 +7,7 @@ import * as Router from "koa-router"
 import {
   generateMetaData,
   getMetaData,
+  makePhotoFavorite,
   programmableDeleteObject,
 } from "./generateMetaData"
 import s3, { config } from "./s3"
@@ -70,9 +71,9 @@ router.post("/upload", async (ctx: any) => {
   }
 })
 
-router.patch("/photos/:id/label", (ctx, next) => {
+router.post("/photos/:id/favorite", async (ctx, next) => {
   const { id } = (ctx.request as any).params as { id: string }
-  const { labels } = ctx.request.body
+  await makePhotoFavorite(id)
 
   ctx.body = { success: true }
   next()

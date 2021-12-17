@@ -72,6 +72,15 @@ export const programmableDeleteObject = async (key: string) => {
   return uploadNewMetaData({ ...meta, photos })
 }
 
+export const makePhotoFavorite = async (key: string) => {
+  const meta = await getMetaData()
+  const photos = meta.photos.map((photo) => {
+    return photo.s3Key === key ? { ...photo, favorite: true } : photo
+  })
+
+  return uploadNewMetaData({ ...meta, photos })
+}
+
 export const deleteMetaData = () => {
   return new Promise((resolve, reject) => {
     s3.deleteObject(
