@@ -12,7 +12,7 @@
   },
   "nodemonConfig": {
     "watch": [
-      "src"
+      "src/server"
     ],
     "ext": "ts,yaml",
     "exec": "ts-node --pretty --transpile-only src/server/index.ts"

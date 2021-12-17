@@ -1,4 +1,5 @@
 import { useStore } from "@nanostores/preact"
+import cx from "classnames"
 import { useEffect, useState } from "preact/compat"
 import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
 import { $metaData, $metaDataLoading, fetchMetaData } from "../../store"
@@ -34,10 +35,15 @@ export default function PhotosListPage() {
                 setOpenPhoto={setOpenPhoto}
               />
             )
-            return metaData.selectedPhotos.includes(photo.s3Key) ? (
-              <div class={css.selectedPhoto}>{preview}</div>
-            ) : (
-              preview
+            return (
+              <div
+                class={cx({
+                  [css.currentPhoto]: metaData.selectedPhoto === i,
+                  [css.selectedPhoto]: metaData.selectedPhotos.includes(i),
+                })}
+              >
+                {preview}
+              </div>
             )
           })}
         </div>

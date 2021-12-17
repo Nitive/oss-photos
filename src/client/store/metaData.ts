@@ -2,14 +2,18 @@ import { atom } from "nanostores"
 import { Metadata, Photo } from "../../types"
 
 interface MetadataState extends Metadata {
-  selectedPhotos: string[]
+  selectedPhoto: number | undefined
+  selectedPhotos: number[]
+  mode: Mode
   columns: number
 }
 
 export const $metaData = atom<MetadataState>({
   generatedAt: "",
   photos: [],
+  selectedPhoto: undefined,
   selectedPhotos: [],
+  mode: "normal",
   columns: 25,
 })
 export const $deletedMetaData = atom({
@@ -43,100 +47,123 @@ export async function setMetaData(metaData: any) {
 
 type Mode = "normal" | "visual"
 
-const $mode = atom("normal" as Mode)
+function findAnotherEdge(meta: MetadataState): number {
+  if (meta.selectedPhotos.length === 1) {
+    return meta.selectedPhotos[0]
+  }
 
-const bindings: {
-  [key: string]: { [key in Mode]?: (state: MetadataState) => MetadataState }
-} = {
-  j: {
-    // Move to photo below
+  if (meta.selectedPhotos[0] === meta.selectedPhoto) {
+    return meta.selectedPhotos.at(-1)!
+  }
+
+  return meta.selectedPhotos[0]
+}
+
+function createMoveHandlers(
+  getNewIndex: (i: number, meta: MetadataState) => number
+): Binding {
+  function getNewSelected(meta: MetadataState): number {
+    return Math.min(
+      meta.photos.length - 1,
+      getNewIndex(meta.selectedPhoto!, meta)
+    )
+  }
+
+  return {
     normal(meta) {
       if (meta.photos.length === 0) {
-        return { ...meta, selectedPhotos: [] }
+        return { ...meta, selectedPhotos: [], selectedPhoto: undefined }
       }
-      if (meta.selectedPhotos.length === 0) {
-        return { ...meta, selectedPhotos: [meta.photos[0].s3Key] }
-      }
-      if (meta.selectedPhotos.length === 1) {
-        const findIndex = meta.photos.findIndex(
-          (p) => p.s3Key === meta.selectedPhotos[0]
-        )
-        const newIndex = meta.photos[findIndex + meta.columns].s3Key
+
+      if (typeof meta.selectedPhoto === "number") {
+        const newSelected = getNewSelected(meta)
         return {
           ...meta,
-          selectedPhotos: newIndex ? [newIndex] : [],
+          selectedPhoto: newSelected,
+          selectedPhotos: typeof newSelected === "number" ? [newSelected] : [],
         }
       }
+
+      return { ...meta, selectedPhotos: [0], selectedPhoto: 0 }
+    },
+    visual(meta) {
+      if (meta.photos.length === 0) {
+        return { ...meta, selectedPhotos: [], selectedPhoto: undefined }
+      }
+
+      if (typeof meta.selectedPhoto === "number") {
+        const newSelected = getNewSelected(meta)
+        if (!newSelected) {
+          return meta
+        }
+
+        const side1 = findAnotherEdge(meta)
+        const side2 = newSelected
+        const start = Math.min(side1, side2)
+        const end = Math.max(side1, side2)
+        const selectedPhotos = Array.from({ length: end - start + 1 }).map(
+          (_, i) => start + i
+        )
+
+        return {
+          ...meta,
+          selectedPhoto: newSelected,
+          selectedPhotos,
+        }
+      }
+
       return meta
     },
-  },
-  k: {
-    // Move to photo below
+  }
+}
+
+type Binding = {
+  [key in Mode]?: (state: MetadataState) => MetadataState
+}
+
+interface Bindings {
+  [key: string]: Binding
+}
+
+const keypressBindings: Bindings = {
+  0: createMoveHandlers((i, meta) => i - (i % meta.columns)),
+  $: createMoveHandlers((i, meta) => i + meta.columns - (i % meta.columns) - 1),
+  j: createMoveHandlers((i, meta) => i + meta.columns),
+  k: createMoveHandlers((i, meta) => i - meta.columns),
+  l: createMoveHandlers((i) => i + 1),
+  h: createMoveHandlers((i) => i - 1),
+  v: {
     normal(meta) {
-      if (meta.photos.length === 0) {
-        return { ...meta, selectedPhotos: [] }
+      return { ...meta, mode: "visual" }
+    },
+    visual(meta) {
+      return {
+        ...meta,
+        mode: "normal",
+        selectedPhotos:
+          typeof meta.selectedPhoto === "number" ? [meta.selectedPhoto] : [],
       }
-      if (meta.selectedPhotos.length === 0) {
-        return { ...meta, selectedPhotos: [meta.photos[0].s3Key] }
-      }
-      if (meta.selectedPhotos.length === 1) {
-        const findIndex = meta.photos.findIndex(
-          (p) => p.s3Key === meta.selectedPhotos[0]
-        )
-        const newIndex = meta.photos[findIndex - meta.columns].s3Key
-        return {
-          ...meta,
-          selectedPhotos: newIndex ? [newIndex] : [],
-        }
-      }
-      return meta
     },
   },
-  l: {
-    // Move to photo on the right
-    normal(meta) {
-      if (meta.photos.length === 0) {
-        return { ...meta, selectedPhotos: [] }
+  o: {
+    visual(meta) {
+      return {
+        ...meta,
+        selectedPhoto: findAnotherEdge(meta),
       }
-      if (meta.selectedPhotos.length === 0) {
-        return { ...meta, selectedPhotos: [meta.photos[0].s3Key] }
-      }
-      if (meta.selectedPhotos.length === 1) {
-        const findIndex = meta.photos.findIndex(
-          (p) => p.s3Key === meta.selectedPhotos[0]
-        )
-        const newIndex = meta.photos[findIndex + 1].s3Key
-        return {
-          ...meta,
-          selectedPhotos: newIndex ? [newIndex] : [],
-        }
-      }
-      return meta
-    },
-  },
-  h: {
-    // Move to photo on the left
-    normal(meta) {
-      if (meta.photos.length === 0) {
-        return { ...meta, selectedPhotos: [] }
-      } else if (meta.selectedPhotos.length === 0) {
-        return { ...meta, selectedPhotos: [meta.photos[0].s3Key] }
-      } else if (meta.selectedPhotos.length === 1) {
-        const findIndex = meta.photos.findIndex(
-          (p) => p.s3Key === meta.selectedPhotos[0]
-        )
-        const newIndex = meta.photos[findIndex - 1].s3Key
-        return {
-          ...meta,
-          selectedPhotos: newIndex ? [newIndex] : [],
-        }
-      }
-      return meta
     },
   },
 }
 
-window.addEventListener("keypress", (e) => {
-  const newState = bindings[e.key]?.[$mode.get()]?.($metaData.get())
-  newState && $metaData.set(newState)
-})
+const keydownBindings: Bindings = {
+  // Escape: {},
+}
+
+const handleKey = (bindings: Bindings) => (e: KeyboardEvent) => {
+  const prevState = $metaData.get()
+  const newState = bindings[e.key]?.[prevState.mode]?.(prevState)
+  if (newState) $metaData.set(newState)
+}
+
+window.addEventListener("keypress", handleKey(keypressBindings))
+window.addEventListener("keydown", handleKey(keydownBindings))
