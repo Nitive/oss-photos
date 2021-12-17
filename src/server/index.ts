@@ -9,10 +9,12 @@ import {
   getMetaData,
   makePhotoFavorite,
   programmableDeleteObject,
+  uploadPassword,
 } from "./generateMetaData"
 import s3, { config } from "./s3"
 import * as path from "path"
 import * as fs from "fs"
+import * as crypto from "crypto"
 
 const app = new Koa()
 const router = new Router()
@@ -139,8 +141,13 @@ router.get("/photo", async (ctx) => {
 router.post("/password", async (ctx) => {
   const data = (ctx.request as any).body
   const { password } = JSON.parse(data)
-
-  ctx.body = { success: true }
+  const hash = crypto.createHash("sha256").update(password).digest("hex")
+  try {
+    await uploadPassword(hash)
+    ctx.body = { success: true }
+  } catch (e) {
+    ctx.body = { success: false, error: e }
+  }
 })
 
 app.use(router.routes()).use(router.allowedMethods())

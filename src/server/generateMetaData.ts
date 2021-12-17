@@ -177,6 +177,27 @@ function sortPhotos(photos: Photo[]): Photo[] {
   })
 }
 
+const passwordHashKey = path.join(
+  process.env.S3_PREFIX as string,
+  "oss-photo",
+  "password-hash.json"
+)
+
+export const uploadPassword = async (passwordHash: string) => {
+  const uploadParams = {
+    Bucket: process.env.S3_BUCKET as string,
+    Key: passwordHashKey,
+    Body: passwordHash,
+    ContentType: "application/json",
+  }
+  return new Promise((resolve, reject) => {
+    s3.upload(uploadParams, (err: unknown, data: any) => {
+      if (err) return reject(err)
+      return resolve(data)
+    })
+  })
+}
+
 export const generateMetaData = async () => {
   // await deleteMetaData()
   console.info("Start generating meta data")
