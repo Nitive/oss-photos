@@ -11,7 +11,7 @@ const filters: { [key in Filter]: (p: Photo) => boolean } = {
     return !photo.deleted
   },
   favorites(photo) {
-    return photo.favorite
+    return photo.favorite && !photo.deleted
   },
   deleted(photo) {
     return photo.deleted
