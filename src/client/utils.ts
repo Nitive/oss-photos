@@ -13,3 +13,9 @@ export function getPreview(s3Key: string, gridMode: GridMode) {
     `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
   )}`
 }
+
+export function getFullPhoto(s3Key: string) {
+  return `http://localhost:8080/insecure/w:2000/plain/${encodeURIComponent(
+    `http://localhost:3000/photo?src=${encodeURIComponent(s3Key)}`
+  )}`
+}

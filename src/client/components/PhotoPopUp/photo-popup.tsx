@@ -3,7 +3,7 @@ import css from "./styles.module.scss"
 import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"
-import { getPreview } from "../../utils"
+import { getFullPhoto } from "../../utils"
 import {
   $metaData,
   changeOpenedPhoto,
@@ -44,10 +44,7 @@ export const PhotoPopup = () => {
       </button>
       <img
         className={css.open_photo}
-        src={getPreview(
-          getFiltered(metaData)[metaData.openedPhoto!].s3Key,
-          metaData.gridMode
-        )}
+        src={getFullPhoto(getFiltered(metaData)[metaData.openedPhoto!].s3Key)}
         alt=""
       />
     </div>
