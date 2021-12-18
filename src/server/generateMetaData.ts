@@ -1,7 +1,7 @@
 import exifr from "exifr"
 import * as path from "path"
 import { Metadata, Photo } from "../types"
-import s3 from "./s3"
+import s3, { config } from "./s3"
 
 const metaDataKey = path.join(
   process.env.S3_PREFIX as string,
@@ -131,17 +131,21 @@ const getAllObjects = async () => {
 
 export const getMetaData = (): Promise<Metadata> => {
   return new Promise((resolve, reject) => {
-    s3.getObject(
-      {
-        Bucket: process.env.S3_BUCKET as string,
-        Key: metaDataKey,
-      },
-      function (err, data) {
-        if (err?.code === "NoSuchKey") return resolve(initialMetaData)
-        if (err) return reject(err)
-        resolve(JSON.parse(data?.Body?.toString() as string))
-      }
-    )
+    try {
+      s3.getObject(
+        {
+          Bucket: config.bucket,
+          Key: metaDataKey,
+        },
+        function (err, data) {
+          if (err?.code === "NoSuchKey") return resolve(initialMetaData)
+          if (err) return reject(err)
+          resolve(JSON.parse(data?.Body?.toString() as string))
+        }
+      )
+    } catch (err) {
+      reject(err)
+    }
   })
 }
 

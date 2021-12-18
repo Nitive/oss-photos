@@ -121,6 +121,15 @@ export function changeOpenedPhoto(change: number) {
 
 // Subscriptions
 
+$metaData.subscribe((meta) => {
+  if (
+    meta.openedPhoto !== undefined &&
+    meta.openedPhoto !== meta.selectedPhoto
+  ) {
+    setOpenedPhoto(meta.selectedPhoto)
+  }
+})
+
 function isChanged(a: Photo, b: Photo) {
   if (!a || !b) return false
   return (
@@ -382,7 +391,18 @@ const keydownBindings: Bindings = {
   ArrowLeft: left,
   ArrowRight: right,
   Escape: {
-    visual: toNormalMode,
+    visual(meta) {
+      if (meta.openedPhoto) {
+        return toNormalMode({ ...meta, openedPhoto: undefined })
+      }
+      return toNormalMode(meta)
+    },
+    normal(meta) {
+      if (meta.openedPhoto) {
+        return { ...meta, openedPhoto: undefined }
+      }
+      return meta
+    },
   },
   Enter: {
     normal(meta) {
