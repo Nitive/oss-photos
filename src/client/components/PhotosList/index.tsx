@@ -1,13 +1,12 @@
 import { useStore } from "@nanostores/preact"
 import { PhotoPopup } from "../../components/PhotoPopUp/photo-popup"
-import { $metaData, $metaDataLoading, getFiltered } from "../../store"
+import { $metaData, $metaDataLoading } from "../../store"
 import { PhotoPreview } from "./PhotoPreview"
 import css from "./styles.module.scss"
 
 export default function PhotosList() {
   const metaData = useStore($metaData)
   const metaDataLoading = useStore($metaDataLoading)
-  const photos = getFiltered(metaData)
 
   if (metaDataLoading) {
     return <div class={css.loading}>Loading...</div>
@@ -16,7 +15,7 @@ export default function PhotosList() {
   return (
     <>
       <div className={css.list}>
-        {photos.map((photo, i) => (
+        {metaData.photos.map((photo, i) => (
           <PhotoPreview photo={photo} index={i} key={photo.s3Key} />
         ))}
       </div>

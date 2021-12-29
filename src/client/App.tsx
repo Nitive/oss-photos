@@ -7,7 +7,7 @@ import DeletedPhotosListPage from "./pages/DeletedPhotosListPage"
 import FavoritesListPage from "./pages/FavoritesPhotosListPage"
 import PhotosListPage from "./pages/PhotosListPage"
 import Settings from "./pages/Settings"
-import { fetchMetaData, setFilter } from "./store"
+import { fetchMetaData } from "./store"
 
 export interface AppContext {
   // TODO
@@ -20,23 +20,19 @@ export function useAppContext() {
 }
 
 export function App(props: { ctx: AppContext }) {
-  useEffect(() => {
-    fetchMetaData()
-  }, [])
-
   const location = useLocation()
   const path = location[0]
 
   useEffect(() => {
-    setFilter(
-      (
-        {
-          "/": "all",
-          "/favorites": "favorites",
-          "/deleted-photos": "deleted",
-        } as const
-      )[path] || "all"
-    )
+    const filter = (
+      {
+        "/": "all",
+        "/favorites": "favorites",
+        "/deleted-photos": "deleted",
+      } as const
+    )[path] || "all"
+
+    fetchMetaData({ filter })
   }, [path])
 
   return (

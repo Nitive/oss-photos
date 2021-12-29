@@ -129,8 +129,34 @@ const getAllObjects = async () => {
   return objects
 }
 
-export const getMetaData = (): Promise<Metadata> => {
-  return new Promise((resolve, reject) => {
+export type Filter = "all" | "favorites" | "deleted"
+
+const filters: { [key in Filter]: (p: Photo) => boolean } = {
+  all(photo) {
+    return !photo.deleted
+  },
+  favorites(photo) {
+    return photo.favorite && !photo.deleted
+  },
+  deleted(photo) {
+    return photo.deleted
+  },
+}
+
+export type MetaDataParams = {
+  offset?: number,
+  limit?: number,
+  filter: Filter,
+};
+
+export const MetaDataParamsDefaults: MetaDataParams = {
+  offset: 0,
+  limit: 20,
+  filter: 'all',
+};
+
+export const getMetaData = async (params: MetaDataParams = MetaDataParamsDefaults): Promise<Metadata> => {
+  const data = await new Promise<Metadata>((resolve, reject) => {
     try {
       s3.getObject(
         {
@@ -147,6 +173,13 @@ export const getMetaData = (): Promise<Metadata> => {
       reject(err)
     }
   })
+
+  return {
+    ...data,
+    photos: data.photos
+      .filter(filters[params.filter])
+      .slice(params.offset, params.limit)
+  };
 }
 
 export const patchPhotos = async (

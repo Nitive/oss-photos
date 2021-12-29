@@ -48,11 +48,29 @@ export async function changeGridMode(mode: MetadataState["gridMode"]) {
   $metaData.set({ ...$metaData.get(), columns, gridMode: mode })
 }
 
-export async function fetchMetaData() {
+export type MetaDataParams = {
+  offset: number,
+  limit: number,
+  filter: Filter,
+};
+
+export const MetaDataParamsDefaults: MetaDataParams = {
+  offset: 0,
+  limit: 20,
+  filter: 'all',
+};
+
+export async function fetchMetaData(params: Partial<MetaDataParams> = {}) {
   $metaDataLoading.set(true)
-  const res = await fetch("http://localhost:3000/photos")
+  const fetchURL = new URL('http://localhost:3000/photos');
+  fetchURL.searchParams.set('offset', String(params.offset ?? 0));
+  fetchURL.searchParams.set('limit', String(params.limit ?? 20));
+  fetchURL.searchParams.set('filter', params.filter ?? 'all');
+
+  const res = await fetch(fetchURL.toString());
   const metaData = await res.json()
   const newState = { ...$metaData.get(), ...metaData }
+
   savedMeta = newState
   $metaData.set(newState)
   $metaDataLoading.set(false)

@@ -53,7 +53,9 @@ app.use(
 )
 
 router.get("/photos", async (ctx) => {
-  const metaData = await getMetaData()
+  const query = ctx.request.query as any;
+  const metaData = await getMetaData(query)
+
   ctx.body = metaData
 })
 
@@ -227,12 +229,12 @@ app.listen(3000, () => {
   console.log("Started on https://localhost:3000")
 })
 
-generateMetaData()
-new CronJob(
-  "* * * * *",
-  () => {
-    generateMetaData()
-  },
-  null,
-  true
-)
+// generateMetaData()
+// new CronJob(
+//   "* * * * *",
+//   () => {
+//     generateMetaData()
+//   },
+//   null,
+//   true
+// )
