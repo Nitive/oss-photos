@@ -1,6 +1,10 @@
 @import "../../styles/vars";
 @import "../../styles/mixins";
 
+.loading {
+  padding: 40px;
+}
+
 .list {
   display: flex;
   flex-flow: row wrap;

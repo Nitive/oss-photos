@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/preact"
 import css from "./styles.module.scss"
+import cx from "classnames"
 import ArrowRight from "../../icons/ArrowRight"
 import ArrowLeft from "../../icons/ArrowLeft"
 import { CrossIcon } from "../../icons/CrossIcon"

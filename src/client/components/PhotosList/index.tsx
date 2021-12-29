@@ -10,7 +10,7 @@ export default function PhotosList() {
   const photos = getFiltered(metaData)
 
   if (metaDataLoading) {
-    return <p>Loading...</p>
+    return <div class={css.loading}>Loading...</div>
   }
 
   return (
