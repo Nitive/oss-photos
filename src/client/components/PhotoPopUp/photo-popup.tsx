@@ -16,7 +16,30 @@ export const PhotoPopup = () => {
   const metaData = useStore($metaData)
 
   return (
-    <div className={css.popup}>
+    <>
+      <div className={css.popup}>
+        <button
+          className={cx(css.popupButton, css.arrow, css.arrow_left)}
+          onClick={() => {
+            changeOpenedPhoto(-1)
+          }}
+        >
+          <ArrowLeft />
+        </button>
+        <img
+          className={css.open_photo}
+          src={getFullPhoto(getFiltered(metaData)[metaData.openedPhoto!].s3Key)}
+          alt=""
+        />
+        <button
+          className={cx(css.popupButton, css.arrow, css.arrow_right)}
+          onClick={() => {
+            changeOpenedPhoto(+1)
+          }}
+        >
+          <ArrowRight />
+        </button>
+      </div>
       <button
         className={cx(css.popupButton, css.popup_close)}
         onClick={() => {
@@ -26,27 +49,6 @@ export const PhotoPopup = () => {
       >
         <CrossIcon />
       </button>
-      <button
-        className={cx(css.popupButton, css.arrow, css.arrow_left)}
-        onClick={() => {
-          changeOpenedPhoto(-1)
-        }}
-      >
-        <ArrowLeft />
-      </button>
-      <button
-      className={cx(css.popupButton, css.arrow, css.arrow_right)}
-        onClick={() => {
-          changeOpenedPhoto(+1)
-        }}
-      >
-        <ArrowRight />
-      </button>
-      <img
-        className={css.open_photo}
-        src={getFullPhoto(getFiltered(metaData)[metaData.openedPhoto!].s3Key)}
-        alt=""
-      />
-    </div>
+    </>
   )
 }
