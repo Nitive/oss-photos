@@ -22,14 +22,15 @@ export function PhotoPreview(props: Props) {
   const metaData = useStore($metaData)
   const { gridMode, columns } = metaData
   const sidebarWidth = 290
-  const width = document.body.offsetWidth - sidebarWidth
+  const marginsSum = gridMode === "small" ? 0 : columns + 1;
+  const width = document.body.offsetWidth - sidebarWidth - marginsSum
 
   return (
     <div
       style={{
-        width: width / columns - (gridMode === "small" ? 0 : 10),
+        width: width / columns - (gridMode === "small" ? 0 : 1),
         height: width / columns,
-        margin: metaData.gridMode === "small" ? null : "5px 5px",
+        margin: metaData.gridMode === "small" ? null : "1px 1px",
       }}
       class={cx(css.item, {
         [css.currentPhoto]: metaData.selectedPhoto === props.index,
@@ -46,9 +47,6 @@ export function PhotoPreview(props: Props) {
       }}
       onDblClick={() => {
         setOpenedPhoto(props.index)
-        const paddingOffset =
-          window.innerWidth - document.body.offsetWidth + "px"
-        document.body.style.paddingRight = paddingOffset
         document.body.classList.add(popupcss.disable_scroll)
       }}
     >

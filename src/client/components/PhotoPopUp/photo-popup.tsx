@@ -18,17 +18,16 @@ export const PhotoPopup = () => {
   return (
     <div className={css.popup}>
       <button
-        className={css.popup_close}
+        className={cx(css.popupButton, css.popup_close)}
         onClick={() => {
           setOpenedPhoto(undefined)
           document.body.classList.remove(css.disable_scroll)
-          document.body.style.paddingRight = "0px"
         }}
       >
         <CrossIcon />
       </button>
       <button
-        className={css.arrow_left}
+        className={cx(css.popupButton, css.arrow, css.arrow_left)}
         onClick={() => {
           changeOpenedPhoto(-1)
         }}
@@ -36,7 +35,7 @@ export const PhotoPopup = () => {
         <ArrowLeft />
       </button>
       <button
-        className={css.arrow_right}
+      className={cx(css.popupButton, css.arrow, css.arrow_right)}
         onClick={() => {
           changeOpenedPhoto(+1)
         }}
