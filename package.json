@@ -7,8 +7,7 @@
   "scripts": {
     "start": "parcel src/client/index.html",
     "start-server": "nodemon",
-    "start-imgproxy": "IMGPROXY_MAX_SRC_RESOLUTION=1000 IMGPROXY_READ_TIMEOUT=60 IMGPROXY_WRITE_TIMEOUT=60 IMGPROXY_KEEP_ALIVE_TIMEOUT=60 IMGPROXY_DOWNLOAD_TIMEOUT=60 imgproxy",
-    "postinstall": "yarn dlx @yarnpkg/sdks base"
+    "start-imgproxy": "IMGPROXY_MAX_SRC_RESOLUTION=1000 IMGPROXY_READ_TIMEOUT=60 IMGPROXY_WRITE_TIMEOUT=60 IMGPROXY_KEEP_ALIVE_TIMEOUT=60 IMGPROXY_DOWNLOAD_TIMEOUT=60 imgproxy"
   },
   "nodemonConfig": {
     "watch": [
