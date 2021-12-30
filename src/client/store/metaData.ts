@@ -130,7 +130,7 @@ export function setOpenedPhoto(i: number | undefined) {
 
 export function changeOpenedPhoto(change: number) {
   const prevState = $metaData.get()
-  if (!prevState.openedPhoto) return
+  if (prevState.openedPhoto === undefined) return
   $metaData.set({
     ...prevState,
     openedPhoto: prevState.openedPhoto + change,
@@ -410,13 +410,13 @@ const keydownBindings: Bindings = {
   ArrowRight: right,
   Escape: {
     visual(meta) {
-      if (meta.openedPhoto) {
+      if (meta.openedPhoto !== undefined) {
         return toNormalMode({ ...meta, openedPhoto: undefined })
       }
       return toNormalMode(meta)
     },
     normal(meta) {
-      if (meta.openedPhoto) {
+      if (meta.openedPhoto !== undefined) {
         return { ...meta, openedPhoto: undefined }
       }
       return meta
